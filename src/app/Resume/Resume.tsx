@@ -1,4 +1,4 @@
-import {  EyeOutline, Help, LogoJavascript, LogoPython, School, Settings } from "react-ionicons";
+import {   Help, School, Settings } from "react-ionicons";
 
 export function Resume() {
   return (
