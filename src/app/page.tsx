@@ -14,7 +14,7 @@ function App() {
   return (
     <>
 
-      <main>
+      {/* <main>
           <SideBar/>
         <div className="main-content">
         <NavBar setCurrentPage={setCurrentPage} currentPage={currentPage}/>
@@ -23,7 +23,7 @@ function App() {
     {currentPage === 'blog' && <Blog />}
     {currentPage === 'contact' && <Contact  setCurrentPage={setCurrentPage} />}
         </div>
-      </main>
+      </main> */}
     </>
   );
 }
