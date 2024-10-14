@@ -20,7 +20,7 @@ export default function About() {
         </p>
 
         <p >
-          Currently i am seeking an internship
+          Currently I am seeking an internship
         </p>
       </section>
 

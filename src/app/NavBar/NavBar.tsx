@@ -29,7 +29,7 @@ const NavBar: React.FC<NavBarProps> = ({ setCurrentPage, currentPage }) => {
         </li>
         <li className="navbar-item">
           <button
-            className={`navbar-link ${currentPage === 'blog' ? 'active' : ''}`} // Changed to 'blog' for consistency
+            className={`navbar-link ${currentPage === 'blog' ? 'active' : ''}`} 
             data-nav-link
             onClick={() => setCurrentPage('blog')}
           >

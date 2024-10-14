@@ -13,6 +13,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('about')
   return (
     <>
+
       <main>
           <SideBar/>
         <div className="main-content">

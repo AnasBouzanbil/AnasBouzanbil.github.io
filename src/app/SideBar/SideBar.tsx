@@ -14,7 +14,7 @@ export default function Sidebar(){
           <figure className="avatar-box">
           <img 
                         src={avatar.src} 
-                        alt="Richard Hanrick" 
+                        alt="Anas Bouzanbil" 
                         width={80} 
                         height={80}
                         
@@ -44,7 +44,7 @@ export default function Sidebar(){
               <div className="contact-info">
                 <p className="contact-title">Email</p>
   
-                <a href="mailto:richard@example.com" className="contact-link">anassbouznbil@gmail.com</a>
+                <a href="mailto:anassbouznbil@gmail.com" className="contact-link">anassbouznbil@gmail.com</a>
               </div>
   
             </li>
@@ -60,7 +60,7 @@ export default function Sidebar(){
               <div className="contact-info">
                 <p className="contact-title">Phone</p>
   
-                <a href="tel:+212 614954076" className="contact-link">+212 614954076</a>
+                <a href="tel:+212 614954076" className="contact-link">+212 774125469</a>
               </div>
   
             </li>

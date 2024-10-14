@@ -1,4 +1,5 @@
 
+@import "devicon/devicon.min.css";
 
 :root {
 
@@ -45,7 +46,7 @@
   --white-2: hsl(0, 0%, 98%);
   --orange-yellow-crayola: hsl(45, 100%, 72%);
   --vegas-gold: hsl(45, 54%, 58%);
-  --light-gray: hsl(0, 0%, 84%);
+  --light-gray: hsl(0, 0%, 100%);
   --light-gray-70: hsla(0, 0%, 84%, 0.7);
   --bittersweet-shimmer: hsl(0, 43%, 51%);
 
@@ -92,7 +93,91 @@
 }
 
 
+.light-mode {
+  --bg-gradient-onyx: linear-gradient(
+    to bottom right,
+    hsl(0, 0%, 100%) 3%,   /* White */
+    hsl(210, 30%, 95%) 97%  /* Very light blue-gray */
+  );
+  --bg-gradient-jet: linear-gradient(
+    to bottom right,
+    hsla(0, 0%, 95%, 0.251) 0%,  /* Light transparent */
+    hsla(210, 10%, 90%, 0) 100%  /* Lighter shade */
+  );
+  --bg-gradient-yellow-1: linear-gradient(
+    to bottom right,
+    hsl(45, 100%, 40%) 0%,    /* Medium yellow */
+    hsla(45, 100%, 60%, 0) 50% /* Light yellow transparent */
+  );
+  --bg-gradient-yellow-2: linear-gradient(
+    135deg,
+    hsla(45, 100%, 40%, 0.251) 0%, /* Light transparent */
+    hsla(45, 100%, 60%, 0) 59.86%  /* Lighter shade */
+  );
+  --border-gradient-onyx: linear-gradient(
+    to bottom right,
+    hsl(0, 0%, 90%) 0%,   /* Light gray */
+    hsla(0, 0%, 90%, 0) 50%  /* Transparent */
+  );
+  --text-gradient-yellow: linear-gradient(
+    to right,
+    hsl(45, 100%, 50%),    /* Medium yellow */
+    hsl(35, 100%, 40%)     /* Darker yellow */
+  );
 
+  /* Solid Colors */
+  --jet: hsl(0, 0%, 20%);   /* Dark gray for text */
+  --onyx: hsl(0, 0%, 30%);  /* Slightly darker gray */
+  --eerie-black-1: hsl(0, 0%, 40%);  /* Light gray */
+  --eerie-black-2: hsl(0, 0%, 45%);  /* Lighter gray */
+  --smoky-black: hsl(0, 0%, 50%); /* Mid gray */
+  --white-1: hsl(0, 0%, 100%);   /* White */
+  --white-2: hsl(0, 0%, 98%);    /* Almost white */
+  --orange-yellow-crayola: hsl(45, 100%, 50%); /* Medium yellow */
+  --vegas-gold: hsl(45, 54%, 60%); /* Light gold */
+  --light-gray: hsl(0, 0%, 90%); /* Light gray */
+  --light-gray-70: hsla(0, 0%, 84%, 0.7); /* Semi-transparent light gray */
+  --bittersweet-shimmer: hsl(0, 43%, 51%); /* Light color for accents */
+
+  /**
+   * Typography
+   */
+
+  /* Font-Family */
+  --ff-poppins: 'Poppins', sans-serif;
+
+  /* Font-Size */
+  --fs-1: 24px;
+  --fs-2: 18px;
+  --fs-3: 17px;
+  --fs-4: 16px;
+  --fs-5: 15px;
+  --fs-6: 14px;
+  --fs-7: 13px;
+  --fs-8: 11px;
+
+  /* Font-Weight */
+  --fw-300: 300;
+  --fw-400: 400;
+  --fw-500: 500;
+  --fw-600: 600;
+
+  /**
+   * Shadow
+   */
+  
+  --shadow-1: 0 4px 8px hsla(0, 0%, 0%, 0.15); /* Lighter shadow */
+  --shadow-2: 0 8px 16px hsla(0, 0%, 0%, 0.15);
+  --shadow-3: 0 8px 20px hsla(0, 0%, 0%, 0.15);
+  --shadow-4: 0 12px 30px hsla(0, 0%, 0%, 0.1);
+  --shadow-5: 0 12px 50px hsla(0, 0%, 0%, 0.15);
+
+  /**
+   * Transition
+   */
+  --transition-1: 0.25s ease;
+  --transition-2: 0.5s ease-in-out;
+}
 
 
 /*-----------------------------------*\
@@ -136,6 +221,7 @@ input, textarea {
 html { font-family: var(--ff-poppins); }
 
 body { background: var(--smoky-black); }
+
 
 
 
