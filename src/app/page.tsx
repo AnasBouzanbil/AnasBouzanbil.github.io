@@ -13,7 +13,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('about')
   return (
     <>
-
+    <h1 className="h1"><span className="span">I will do anything for fun or money.</span> </h1>
       <main>
           <SideBar/>
         <div className="main-content">

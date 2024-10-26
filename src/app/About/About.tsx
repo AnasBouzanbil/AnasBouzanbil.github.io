@@ -10,23 +10,19 @@ export default function About() {
 
       <section className="about-text">
         <p>
-          Iam m Anas Bouzanbil, a Software Engineer from Morocco specializing in full-stack development and mobile development. I am currently studying at 1337 School, where I am expanding my skills and exploring new technologies.
+          I am <span className="special_text1">Anas Bouzanbil</span>, a Software Engineer from Morocco, interested in <span className="special_text2">full-stack development</span> and <span className="special_text2">mobile development</span>. I am currently studying at <span className="special_text2">1337 School</span>, where I am expanding my skills and exploring new technologies.
         </p>
         <p>
-          I work with a variety of programming languages, including C, C++, TypeScript, and JavaScript. I also have experience with frameworks like React, Next.js, NestJS, Express, and Flutter. Additionally, I work with databases like SQL and PostgreSQL, and I am familiar with tools like Docker for containerization.
+          I work with a variety of programming languages, including <span className="special_text2">C</span>, <span className="special_text2">C++</span>, <span className="special_text2">TypeScript</span>, and <span className="special_text2">JavaScript</span> as well as <span className="special_text2">SQL</span>. I also have experience with frameworks like <span className="special_text2">React</span>, <span className="special_text2">Next.js</span>, <span className="special_text2">Express</span>, and <span className="special_text2">Flutter</span>. Additionally, I work with databases like <span className="special_text2">MongoDB</span> and <span className="special_text2">PostgreSQL</span>, and am familiar with tools like Docker for containerization.
         </p>
         <p>
           My goal is to build applications that are both functional and user-friendly, while also ensuring they are visually appealing. I add a personal touch to every project, making sure it stands out and delivers a seamless user experience. My mission is to help you express your message and brand in the most creative and impactful way possible.
         </p>
-
-        <p >
-          Currently I am seeking an internship
-        </p>
+        <p>Currently, I am seeking an internship.</p>
       </section>
 
       <section className="service">
         <h3 className="h3 service-title">What I Do</h3>
-
         <ul className="service-list">
           <li className="service-item">
             <div className="service-icon-box">
@@ -39,7 +35,6 @@ export default function About() {
               </p>
             </div>
           </li>
-
           <li className="service-item">
             <div className="service-icon-box">
               <img src={web.src} alt="Mobile Development" width={55} />
