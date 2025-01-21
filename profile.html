@@ -1,0 +1,147 @@
+<head>
+    <style>
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            height: calc(100vh - 160px);
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            margin: 1rem 0;
+        }
+
+        .hero-text h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-image {
+            text-align: right;
+        }
+
+        .hero-image img,
+        .hero-image-min img {
+            width: 80%;
+            max-width: 400px;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .hero-image img:hover,
+        .hero-image-min img:hover {
+            transform: translateY(-10px);
+        }
+        @keyframes fadeInUp {
+            100% {
+                opacity: 0;
+            }
+            20% {
+                opacity: 0;
+            }
+            40% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            60% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            80% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #profile-image {
+            filter: brightness(0.7);
+        }
+        .hero-image{
+            
+            animation: fadeInUp 1s ease forwards;
+        }
+
+        #profile-image:hover {
+            filter: none;
+            transform: scale(1.1);
+            transition: transform 0.9s ease;
+        }
+
+        #profile-image:active {
+            transform: scale(0.9);
+            transition: transform 0.9s ease;
+            filter: brightness(1.2);
+        }
+
+        #profile-image:focus {
+            transform: scale(6.1);
+            transition: transform 0.9s ease;
+        }
+
+        #profile-image::before {
+            content: "";
+            position: absolute;
+        }
+
+        /* Hidden Image for Smaller Screens */
+        .hero-image-min {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-image {
+                display: none;
+            }
+
+            .hero-image-min {
+                display: block;
+                text-align: center;
+                margin-top: 2rem;
+            }
+
+            .nav-links,
+            .school {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<div class="container hero-content">
+    <div class="hero-image-min">
+        <img id="profile-image" 
+             src="https://media.licdn.com/dms/image/v2/D4E03AQH2vJ9qVTrFAg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1730035143255?e=1739404800&v=beta&t=CaDrrrmOjx1DIYpg1TGwN9nLpTNuYJG8McVlZIcANS8" 
+             alt="Profile Picture">
+    </div>
+
+    <div class="hero-text">
+        <h3>Hello, I'm</h3>
+        <h1>Anas <span style="color: var(--primary-color)">Bouzanbil</span></h1>
+        <h3>Mobile & Web Developer</h3>
+        <p>I can do anything for fun, or money.</p>
+        <div class="social-links">
+            <a href="https://medium.com/@Elhazin" target="_blank"><i class="fab fa-medium"></i></a>
+            <a href="https://www.linkedin.com/in/anas-bouzanbil/" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://github.com/AnasBouzanbil" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="mailto:anas@example.com"><i class="fas fa-envelope"></i></a>
+        </div>
+    </div>
+
+    <div class="hero-image">
+        <img id="profile-image" 
+             src="https://media.licdn.com/dms/image/v2/D4E03AQH2vJ9qVTrFAg/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1730035143255?e=1739404800&v=beta&t=CaDrrrmOjx1DIYpg1TGwN9nLpTNuYJG8McVlZIcANS8" 
+             alt="Profile Picture">
+    </div>
+</div>
