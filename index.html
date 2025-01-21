@@ -6,250 +6,17 @@
     <title>Anas Bouzanbil - Portfolio</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <link rel="stylesheet" href="styleContact.css">
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="profile.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Anas Bouzanbil's portfolio - Web & Mobile Developer">
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&display=swap');
-
-        :root {
-            --primary-color: #f9004d;
-            --background-dark: #1a1a1a;
-            --text-light: #ffffff;
-            --text-gray: #585c63;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Josefin Sans', sans-serif;
-        }
-
-
-        body {
-            background-color: var(--background-dark);
-            color: var(--text-light);
-            line-height: 1.6;
-            overflow: hidden;
-            /* height: 100vh; */
-            user-select: none;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(26, 26, 26, 0.95);
-            padding: 1rem 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .nav-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-light);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-links a {
-            color: var(--text-light);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--primary-color);
-        }
-
-        section {
-            height: 100vh;
-            padding: 80px 0;
-            position: absolute;
-            width: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-            overflow-y: auto;
-        }
-
-        section.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-       
-
-        .section-title {
-            font-size: 2.5rem;
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        .timeline-item {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2rem;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            border-left: 4px solid var(--primary-color);
-            transition: transform 0.3s ease;
-            display: flex;
-            flex-direction: row;
-            gap: 1rem;
-            justify-content: space-between;
-        }
-
-        .timeline-item:hover {
-            transform: translateX(10px);
-            border-left: 6.5px solid var(--primary-color);
-
-        }
-
-        .timeline-date {
-            color: var(--primary-color);
-            font-weight: 500;
-            margin-bottom: 1rem;
-        }
-
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .project-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2rem;
-            border-radius: 1rem;
-            transition: transform 0.3s ease;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1.3rem;
-            border-left: 4px solid #f93a00;
-
-            flex-direction: row;
-        }
-
-        .project-card:hover {
-            transform: translateY(-10px);
-            border-left: 6px solid #f93a00;
-
-        }
-        .social-links {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .social-links a {
-            color: var(--text-light);
-            font-size: 1.5rem;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .nav-indicator {
-            position: fixed;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 1000;
-        }
-
-        .nav-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--text-gray);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .nav-dot.active {
-            background: var(--primary-color);
-            transform: scale(1.5);
-        }
-
-        @media (max-width: 768px) {
-            .hero-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .hero-image {
-                text-align: center;
-                margin-top: 2rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-            .school
-            {
-                display: none;
-            }
-        }
-        .edu {
-            padding-top: 5rem;
-        }
-        .proj{
-            padding-top: 5rem;
-        }
-        
-        #school13{
-            width: 20vh;
-            height: 15vh;
-            border-radius: 10%;
-
-        }
-        #school13:hover
-        
-        {
-            transform: scale(1.1);
-            transition: transform 0.3s ease;
-            cursor: pointer;
-        }
-
-        .project-icon:hover{
-            transform: scale(1.1);
-            cursor: pointer;
-        }
-        a {
-  text-decoration: none;
-  color: inherit; 
-}
-
-
-        </style>
 </head>
 <body>
+    <!-- <canvas id="smokeCanvas"> -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-dot-outline"></div>
     <nav>
         <div class="container nav-content">
             <div class="logo" onclick="updateSection(0)"></div>
@@ -263,192 +30,229 @@
     </nav>
 
     <div class="nav-indicator">
-        <div class="nav-dot active" data-index="0"></div>
-        <div class="nav-dot" data-index="1"></div>
-        <div class="nav-dot" data-index="2"></div>
-        <div class="nav-dot" data-index="3"></div>
+        <div  onclick="updateSection(0)"  class="nav-dot active" data-index="0"></div>
+        <div onclick="updateSection(1)" class="nav-dot" data-index="1"></div>
+        <div onclick="updateSection(2)" class="nav-dot" data-index="2"></div>
+        <div onclick="updateSection(3)" class="nav-dot" data-index="3"></div>
     </div>
 
     <section class="hero active" id="home">
 
+        <div class="container hero-content">
+            <div class="hero-image-min">
+                <img id="profile-image" 
+                     src="./me.jpeg" 
+                     alt="Profile Picture">
+            </div>
+        
+            <div class="hero-text">
+                <h3>Hello, I'm</h3>
+                <h1>Anas <span style="color: var(--primary-color)">Bouzanbil</span></h1>
+                <h3>Mobile & Web Developer</h3>
+                <p>I can do anything for fun, or money.</p>
+                <div class="social-links">
+                    <a href="https://medium.com/@Elhazin" target="_blank"><i class="fab fa-medium"></i></a>
+                    <a href="https://www.linkedin.com/in/anas-bouzanbil/" target="_blank"><i class="fab fa-linkedin"></i></a>
+                    <a href="https://github.com/AnasBouzanbil" target="_blank"><i class="fab fa-github"></i></a>
+                    <a href="mailto:anas@example.com"><i class="fas fa-envelope"></i></a>
+                </div>
+            </div>
+        
+            <div class="hero-image">
+                <img id="profile-image" 
+                     src="./me.jpeg" 
+                     alt="Profile Picture">
+            </div>
+        </div>
+        
     </section>
 
     <section id="education">
-       
+        <div class="container edu">
+            <h2 class="section-title">Education</h2>
+            <div class="timeline-item">
+                <div >
+                <h3>1337 School</h3>
+                <div class="timeline-date">2022 - Present</div>
+                <p>Currently studying software enginnering and enhancing programming skills through practical projects and peer learning.</p>  
+                </div>
+                <div  class="school">
+                    <a href="https://1337.ma/" target="_blank">  
+        
+                    <img id="school13" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRMjDUu5Cugm9VpGLWK5FN-c6zwi9Y1x8DZGA&s" alt="1337">
+                    </a>
+                </div>
+        
+            </div>
+            <div class="timeline-item">
+                <div >
+        
+                <h3>Al Cadi Ayyad University</h3>
+                <div class="timeline-date">2020 - 2022</div>
+                <p>
+                    Student at Al Cadi Ayyad University, Marrakesh. 
+                </p>
+                
+                </div>
+                <div  class="school" >
+                    <a href="https://www.uca.ma/fr" target="_blank">
+                    
+                    <img id="school13" src="data:image/png;base64,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" alt="1337">
+                </a>
+                </div>
+            </div>
+        </div>
     </section>
     <section id="projects">
-
+        <div class="container proj">
+            <h2 class="section-title">Projects</h2>
+            <div class="projects-grid">
+                <a href="https://github.com/AnasBouzanbil/Mobile_Training/tree/main/Flutter/Apps/azkar" target="_blank">
+                    <div class="project-card">
+                        <div class="project-icon">
+                            <img src="./icon-app.svg" alt="App Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>Azkar App</h3>
+                            <p class="innoraml">Mobile application providing Azkar, hadith, and Adhan reminders for Muslim users.</p>
+                        </div>
+                    </div>     
+                </a>
+                <a href="https://github.com/AnasBouzanbil/Mobile_Training/tree/main/Flutter/Apps/ChatApp" target="_blank">
+                    <div class="project-card mobile">
+                        <div class="project-icon">
+                            <img src="./icon-app.svg" alt="App Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>Talk App</h3>
+                            <p>Anonymous chat platform enabling random conversations between users.</p>
+                        </div>
+                    </div>
+                </a>
+        
+                <a href="https://github.com/AnasBouzanbil/Mobile_Training/tree/main/Flutter/Apps/ai_chat" target="_blank">
+                    <div class="project-card mobile">
+                        <div class="project-icon">
+                            <img src="./icon-app.svg" alt="App Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>TalkAi</h3>
+                            <p>AI chatbot assistant designed to provide helpful responses and facilitate smooth conversations for users.</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="http://chesscheat.zapto.org/" target="_blank">
+                    <div class="project-card web">
+                        <div class="project-icon">
+                            <img src="./icon-dev.svg" alt="Web Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>ChessCheat</h3>
+                            <p>Chess AI assistant for chess players, providing the best move for the current position.</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://github.com/AnasBouzanbil/Matcha" target="_blank">
+                    <div class="project-card web">
+                        <div class="project-icon">
+                            <img src="./icon-dev.svg" alt="Web Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>Matching</h3>
+                            <p>Dating platform matching users based on shared interests and hobbies.</p>                      
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="https://github.com/AnasBouzanbil/JS_TS_Projects/tree/main/PaddlePro" target="_blank">
+                    <div class="project-card web">
+                        <div class="project-icon">
+                            <img src="./icon-dev.svg" alt="Web Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>Paddle Pro</h3>
+                            <p>Platform connecting paddle players with integrated chat and match features.</p>                                           
+                        </div>
+                    </div>
+                </a>
+                
+                <a target="_blank">
+                    <div class="project-card web">
+                        <div class="project-icon">
+                            <img src="./icon-dev.svg" alt="Web Icon">
+                        </div>
+                        <div class="project-details">
+                            <h3>Oh!TV</h3>
+                            <p>Coming soon... Stay tuned for a platform that will offer ....!</p>                                           
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+        
+        
     </section>
     
     <section id="contact">
 
-    </section>
-   
 
-    <script>
-        const sections = document.querySelectorAll('section');
-        const navDots = document.querySelectorAll('.nav-dot');
-        let currentSectionIndex = 0;
-
-        function updateSection(index) {
-            sections.forEach(section => {
-                section.classList.remove('active');
-            });
-            navDots.forEach(dot => {
-                dot.classList.remove('active');
-            });
-            
-            sections[index].classList.add('active');
-            navDots[index].classList.add('active');
-            currentSectionIndex = index;
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowDown' && currentSectionIndex < sections.length - 1) {
-                updateSection(currentSectionIndex + 1);
-            } else if (event.key === 'ArrowUp' && currentSectionIndex > 0) {
-                updateSection(currentSectionIndex - 1);
-            }
-        });
-        fetch('./education.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('education').innerHTML = html;
-      })
-      .catch(err => console.error('Failed to load content:', err));
-        navDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.getAttribute('data-index'));
-                updateSection(index);
-            });
-        });
-
-        fetch('./Projects.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('projects').innerHTML = html;
-      })
-      .catch(err => console.error('Failed to load content:', err));
-        navDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.getAttribute('data-index'));
-                updateSection(index);
-            });
-        });
-        fetch('./profile.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('home').innerHTML = html;
-      })
-      .catch(err => console.error('Failed to load content:', err));
-        navDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.getAttribute('data-index'));
-                updateSection(index);
-            });
-        });
-
-        fetch('./contact.html')
-      .then(response => response.text())
-      .then(html => {
-        document.getElementById('contact').innerHTML = html;
-      })
-      .catch(err => console.error('Failed to load content:', err));
-        navDots.forEach(dot => {
-            dot.addEventListener('click', () => {
-                const index = parseInt(dot.getAttribute('data-index'));
-                updateSection(index);
-            });
-        });
-
-        let wheelTimeout;
-        document.addEventListener('wheel', (event) => {
-            if (wheelTimeout) return;
-            
-            wheelTimeout = setTimeout(() => {
-                wheelTimeout = null;
-            }, 500);
-
-            if (event.deltaY > 0 && currentSectionIndex < sections.length - 1) {
-                updateSection(currentSectionIndex + 1);
-            } else if (event.deltaY < 0 && currentSectionIndex > 0) {
-                updateSection(currentSectionIndex - 1);
-            }
-        });
-
-        (function () {
-            emailjs.init('kc3e4_a8EsRdyRu6D');
-        })();
-
-        const form = document.getElementById('contactForm');
-
-        form.addEventListener('submit', function (e) {
-            e.preventDefault();
-            alert('Form submitted!');
-
-            emailjs.sendForm('service_2pqx0u1', 'template_my2xqif', this)
-                .then(
-                    () => {
-                        alert('Message sent successfully!');
-                        form.reset();
-                    },
-                    (error) => {
-                        alert('Failed to send message. Please try again later.');
-                        console.error('EmailJS Error:', error);
-                    }
-                );
-        });
+        <div class="contact container">
+            <h3 class="section-title">Contact</h3>
+            <div class="formmap">
+                <div class="mapbox">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6751.161886455712!2d-7.942607406133407!3d32.21552074561304!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xdaf7bde5eb73b2f%3A0x76ccb4e830ba305d!2sSTARTGATE!5e0!3m2!1sen!2sma!4v1720262758250!5m2!1sen!2sma"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                        title="Google Maps Location">
+                    </iframe>
+                </div>
         
-        updateSection(0);
+                <form id="contactForm" class="form">
+                    <div class="input-wrapper">
+                        <input
+                            type="text"
+                            name="fullname"
+                            class="form-input"
+                            placeholder="Full name"
+                            required
+                            aria-label="Full name"
+                        />
+        
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="Email address"
+                            required
+                            aria-label="Email address"
+                        />
+                    </div>
+        
+                    <textarea
+                        name="message"
+                        class="form-input"
+                        placeholder="Your Message"
+                        required
+                        aria-label="Your message"
+                    ></textarea>
+        
+                    <button class="form-btn" type="submit">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span>Send Message</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+    </section>
+   <!-- </canvas> -->
 
-
-
-
-
-
-        // Add this to your JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    // Initial animation for hero section
-    const heroSection = document.querySelector('.hero-content');
-    if (heroSection) {
-        heroSection.style.opacity = '1';
-    }
-
-    // Function to check if element is in viewport
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        );
-    }
-
-    // Function to handle scroll animations
-    function handleScrollAnimations() {
-        const elements = document.querySelectorAll('.animate-on-scroll');
-        elements.forEach(element => {
-            if (isInViewport(element)) {
-                element.classList.add('in-view');
-            }
-        });
-    }
-
-    // Add scroll event listener
-    window.addEventListener('scroll', handleScrollAnimations);
-    
-    // Initial check for elements in viewport
-    handleScrollAnimations();
-
-    // Animate social icons one by one
-    const socialLinks = document.querySelectorAll('.social-links a');
-    socialLinks.forEach((link, index) => {
-        link.style.animation = `fadeInUp 0.5s ease forwards ${1.2 + (index * 0.1)}s`;
-    });
-});
-
-
-    </script>
+    <script src="./script.js"></script>
 </body>
 </html>
