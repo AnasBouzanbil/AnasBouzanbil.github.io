@@ -149,6 +149,7 @@ section.active {
   margin-top: 2rem;
 }
 
+
 .social-links a {
   color: var(--text-light);
   font-size: 1.5rem;
@@ -208,6 +209,7 @@ section.active {
     display: none;
   }
 }
+
 .edu {
   padding-top: 5rem;
 }
@@ -300,7 +302,7 @@ a {
 
 .skill-category h3 {
   font-size: 1.5rem;
-
+  font-family: "New Century Schoolbook", "TeX Gyre Schola", serif;
   margin-bottom: 1rem;
   color: var(--primary-color);
 }
