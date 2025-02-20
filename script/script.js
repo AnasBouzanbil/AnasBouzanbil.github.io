@@ -197,8 +197,8 @@ const styles = {
 console.log(
   `%cHello! 👋\n` +
   `%cI see you're checking out my website.\n` +
-  `%cI am ` +
-  `%cAnas Bouzanbil\n` +
+  `%cWell I am ` +
+  `%cAnas\n` +
   `%ca software engineer based in Morocco.\n\n` +
   `%cIf you're interested in working with me, feel free to reach out!\n` +
   `%cLet's chat about tech - I'm always open to new connections.\n` +
