@@ -1,3 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,9 +28,12 @@
     --input: 240 5.9% 90%;
     --ring: 346 100% 50%;
     --radius: 0.5rem;
+    --ftont-fam : "Share Tech Mono", monospace;
   }
 
   .dark {
+    --ftont-fam : "Share Tech Mono", monospace;
+
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -134,3 +141,6 @@ section {
   transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
+.text-primary{
+  font-family: var(--ftont-fam);
+}
