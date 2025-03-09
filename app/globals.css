@@ -1,0 +1,161 @@
+@import url("https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Concert+One&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: red;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 346 100% 50%;
+    --radius: 0.5rem;
+    --text-primary : red;
+    --border-image: red;
+    --img-bg: black;
+
+    
+  }
+  
+  .dark {
+    --img-bg: white;
+
+    --border-image: rgb(49, 49, 49);
+    --text-primary : rgb(128, 255, 255);
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: rgb(255, 0, 0);
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 346 100% 50%;
+
+  }
+}
+
+@layer base {
+  
+  body {
+    /* @apply bg-background text-foreground; */
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Hide scrollbar but allow scrolling */
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Hide default cursor */
+  * {
+    cursor: none !important;
+  }
+  
+  @media (max-width: 768px) {
+    * {
+      cursor: auto !important;
+    }
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+section {
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.text-primary{
+  color: var(--text-primary);
+  font-family: "Share Tech Mono", monospace;
+
+}
+.primary{
+  background-color: var(--primary);
+  color: var(--primary)
+
+}
+
+
+.img {
+  border-radius: 50%;
+  border: 3px solid var(--border-image);
+  box-shadow: 2px 2px 0px var(--img-bg);
+  padding: 10px;
+  background: var(--img-bg);
+  font-weight: bold;
+  font-family: Arial, sans-serif;
+  color: black;
+  transition: all 0.3s ease;
+}
+
+.img:hover {
+  scale: 1.05;
+  filter: brightness(1.1);
+  border-color: var(--primary);
+  box-shadow: 3px 3px 5px var(--img-bg);
+}
+
+.img:active {
+  scale: 0.95;
+  filter: brightness(0.95);
+  box-shadow: 1px 1px 2px var(--img-bg);
+}
+
+.muted{
+  background-color: var(--primary);
+  color: var(--primary)
+}
+
+.sectionname{
+  font-family: 'Concert One', cursive;
+
+}
+.selected
+{
+  background-color: var(--primary);
+  color: brown
+}
+@import "tailwindcss";
