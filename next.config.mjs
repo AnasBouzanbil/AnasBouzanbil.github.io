@@ -8,10 +8,6 @@ try {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: "export", // Enables static export
-  basePath: "/AnasBouzanbil.github.io", // Replace with your GitHub repo name
-  images: {
-    unoptimized: true, // Disable image optimization for static export
-  },
   eslint: {
     ignoreDuringBuilds: true,
   },
