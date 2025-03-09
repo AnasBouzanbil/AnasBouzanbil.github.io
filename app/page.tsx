@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, GitlabIcon as GitHub, Linkedin, Mail, Send, MoonIcon, SunIcon } from "lucide-react"
 import Image from "next/image"
@@ -20,6 +20,25 @@ import SectionIndicator from "@/components/section-indicator"
 import CustomCursor from "@/components/custom-cursor"
 import SparkEffect from "@/components/spark-effect"
 import { useTheme } from "next-themes"
+import Script from "next/script"
+
+// Debounce function to delay execution
+function debounce(func: Function, wait: number) {
+  let timeout: NodeJS.Timeout | null = null
+
+  return function executedFunction(...args: any[]) {
+    const later = () => {
+      timeout = null
+      func(...args)
+    }
+
+    if (timeout) {
+      clearTimeout(timeout)
+    }
+    timeout = setTimeout(later, wait)
+  }
+}
+
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState(0)
   const [sparkPosition, setSparkPosition] = useState({ x: 0, y: 0 })
@@ -28,35 +47,68 @@ export default function Portfolio() {
   const [projectFilter, setProjectFilter] = useState("all")
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const [isEmailJSReady, setIsEmailJSReady] = useState(false)
 
+  // After mounting, we can safely show the UI that depends on the theme
   useEffect(() => {
     setMounted(true)
   }, [])
 
+  // Initialize EmailJS when the component mounts
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.emailjs && !isEmailJSReady) {
+      window.emailjs.init({
+        publicKey: "kc3e4_a8EsRdyRu6D",
+      })
+      setIsEmailJSReady(true)
+    }
+  }, [isEmailJSReady])
+
   const sections = ["home", "education", "skills", "projects", "contact"]
 
+  // Create a debounced version of setActiveSection
+  const debouncedSetActiveSection = useRef(
+    debounce((index: number) => {
+      setActiveSection(index)
+    }, 500),
+  ).current
+
   useEffect(() => {
-    
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown" && activeSection < sections.length - 1) {
-        setActiveSection(activeSection + 1)
+        debouncedSetActiveSection(activeSection + 1)
       } else if (e.key === "ArrowUp" && activeSection > 0) {
-        setActiveSection(activeSection - 1)
+        debouncedSetActiveSection(activeSection - 1)
       }
     }
 
-    let wheelTimeout: NodeJS.Timeout | null = null
     const handleWheel = (e: WheelEvent) => {
-      if (wheelTimeout) return
+      // Check if we're scrolling inside a scrollable container
+      const target = e.target as HTMLElement
+      const scrollableContainer = target.closest(".section-content")
 
-      wheelTimeout = setTimeout(() => {
-        wheelTimeout = null
-      }, 500)
+      if (scrollableContainer) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableContainer
+        const isAtTop = scrollTop === 0
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5
 
+        // Only change sections if we're at the boundaries
+        if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
+          if (e.deltaY > 0 && activeSection < sections.length - 1) {
+            debouncedSetActiveSection(activeSection + 1)
+          } else if (e.deltaY < 0 && activeSection > 0) {
+            debouncedSetActiveSection(activeSection - 1)
+          }
+        }
+        return
+      }
+
+      // Normal section navigation for non-scrollable areas
       if (e.deltaY > 0 && activeSection < sections.length - 1) {
-        setActiveSection(activeSection + 1)
+        debouncedSetActiveSection(activeSection + 1)
       } else if (e.deltaY < 0 && activeSection > 0) {
-        setActiveSection(activeSection - 1)
+        debouncedSetActiveSection(activeSection - 1)
       }
     }
 
@@ -67,7 +119,7 @@ export default function Portfolio() {
       window.removeEventListener("keydown", handleKeyDown)
       window.removeEventListener("wheel", handleWheel)
     }
-  }, [activeSection, sections.length])
+  }, [activeSection, sections.length, debouncedSetActiveSection])
 
   const handleClick = (e: React.MouseEvent) => {
     setSparkPosition({ x: e.clientX, y: e.clientY })
@@ -77,12 +129,35 @@ export default function Portfolio() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    toast({
-      title: "Message sent!",
-      description: "Thanks for reaching out. I'll get back to you soon.",
-    })
-    const form = e.target as HTMLFormElement
-    form.reset()
+
+    if (typeof window !== "undefined" && window.emailjs && formRef.current) {
+      window.emailjs.sendForm("service_2pqx0u1", "template_my2xqif", formRef.current, "kc3e4_a8EsRdyRu6D").then(
+        () => {
+          toast({
+            title: "Message sent!",
+            description: "Thanks for reaching out. I'll get back to you soon.",
+          })
+          if (formRef.current) {
+            formRef.current.reset()
+          }
+          setActiveSection(0) // Go back to home section
+        },
+        (error) => {
+          toast({
+            title: "Failed to send message",
+            description: "Please try again later.",
+            variant: "destructive",
+          })
+          console.error("EmailJS Error:", error)
+        },
+      )
+    } else {
+      toast({
+        title: "EmailJS not loaded",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    }
   }
 
   const languages = [
@@ -165,20 +240,37 @@ export default function Portfolio() {
     },
     {
       title: "HttpServer",
-      description:
-        "the creation of an HTTP server from scratch using C++ and C",
+      description: "the creation of an HTTP server from scratch using C++ and C",
       link: "https://github.com/AnasBouzanbil/Cpp-/tree/main/HTTP_SERVER",
       type: "C++",
     },
-    
   ]
+
+  // Add this function to handle scroll within sections
+  const handleSectionScroll = (e: React.WheelEvent) => {
+    // Get the current target element
+    const target = e.currentTarget as HTMLElement
+
+    // Check if we're at the top or bottom of the scrollable area
+    const isAtTop = target.scrollTop === 0
+    const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 5
+
+    // If we're not at the top or bottom, or if we're scrolling in the direction
+    // that doesn't hit the boundary, prevent the default behavior
+    if (!(isAtTop && e.deltaY < 0) && !(isAtBottom && e.deltaY > 0)) {
+      e.stopPropagation()
+    }
+  }
 
   return (
     <div className="bg-background text-foreground min-h-screen overflow-hidden" onClick={handleClick}>
-      <CustomCursor  theme={theme}/>
+      {/* Add EmailJS Script */}
+      <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
+
+      <CustomCursor />
       {showSpark && <SparkEffect x={sparkPosition.x} y={sparkPosition.y} />}
 
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md ">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto flex justify-between items-center h-16 px-4">
           <div
             className="text-2xl font-bold cursor-pointer bg-gradient-to-r from-primary to-pink-500 bg-clip-text text-transparent"
@@ -230,7 +322,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="min-h-screen flex items-center sectionname"
+              className="min-h-screen flex items-center"
             >
               <div className="container mx-auto px-4">
                 <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -324,15 +416,14 @@ export default function Portfolio() {
                     transition={{ delay: 0.5, duration: 0.5 }}
                     className="order-1 md:order-2 flex justify-center"
                   >
-                    {/* <div className="relative"> */}
                     <div className="relative">
                       <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-pink-500/20 rounded-full blur-3xl opacity-50"></div>
                       <Image
-                        src="https://media.licdn.com/dms/image/v2/D4E03AQH2vJ9qVTrFAg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1730035143280?e=1746662400&v=beta&t=Iz86Af0S-mgxyNAiRN03iTLflyjnYMFhFV5THgjdFL4"
+                        src="https://media.licdn.com/dms/image/v2/D4E03AQH2vJ9qVTrFAg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1730035143280?e=1747267200&v=beta&t=uLJ4i5--eRj5KsRs0obJw7-fbJpWESYRW1GAdVWTaGk"
                         alt="Anas Bouzanbil"
-                        width={600}
-                        height={600}
-                        className="rounded-full border-4 border-primary/50 shadow-xl transition-all duration-500 hover:scale-105 hover:border-primary img cursor-pointer"
+                        width={400}
+                        height={400}
+                        className="rounded-full border-4 border-primary/50 shadow-xl transition-all duration-500 hover:scale-105 hover:border-primary"
                         id="profile-image"
                       />
                     </div>
@@ -359,7 +450,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="min-h-screen flex items-center sectionname"
+              className="min-h-screen flex items-center"
             >
               <div className="container mx-auto px-4 py-16">
                 <h2 className="text-4xl font-bold text-center mb-16">Education</h2>
@@ -431,7 +522,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="min-h-screen flex items-center sectionname"
+              className="min-h-screen flex items-center"
             >
               <div className="container mx-auto px-4 py-16">
                 <h2 className="text-4xl font-bold text-center mb-16">Skills</h2>
@@ -442,21 +533,23 @@ export default function Portfolio() {
                       <TabsTrigger value="frameworks">Frameworks</TabsTrigger>
                       <TabsTrigger value="technologies">Technologies</TabsTrigger>
                     </TabsList>
-                    <TabsContent value="languages" className="space-y-6">
-                      {languages.map((skill, index) => (
-                        <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
-                      ))}
-                    </TabsContent>
-                    <TabsContent value="frameworks" className="space-y-6">
-                      {frameworks.map((skill, index) => (
-                        <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
-                      ))}
-                    </TabsContent>
-                    <TabsContent value="technologies" className="space-y-6">
-                      {technologies.map((skill, index) => (
-                        <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
-                      ))}
-                    </TabsContent>
+                    <div className="section-content custom-scrollbar" onWheel={handleSectionScroll}>
+                      <TabsContent value="languages" className="space-y-6">
+                        {languages.map((skill, index) => (
+                          <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
+                        ))}
+                      </TabsContent>
+                      <TabsContent value="frameworks" className="space-y-6">
+                        {frameworks.map((skill, index) => (
+                          <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
+                        ))}
+                      </TabsContent>
+                      <TabsContent value="technologies" className="space-y-6">
+                        {technologies.map((skill, index) => (
+                          <SkillBar key={skill.name} name={skill.name} level={skill.level} delay={index * 0.1} />
+                        ))}
+                      </TabsContent>
+                    </div>
                   </Tabs>
                 </div>
               </div>
@@ -471,7 +564,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="min-h-screen sectionname"
+              className="min-h-screen"
             >
               <div className="container mx-auto px-4 py-16">
                 <h2 className="text-4xl font-bold text-center mb-16">Projects</h2>
@@ -484,19 +577,21 @@ export default function Portfolio() {
                     </TabsList>
                   </Tabs>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {projects
-                      .filter((project) => projectFilter === "all" || project.type === projectFilter)
-                      .map((project, index) => (
-                        <ProjectCard
-                          key={project.title}
-                          title={project.title}
-                          description={project.description}
-                          link={project.link}
-                          type={project.type}
-                          delay={index * 0.1}
-                        />
-                      ))}
+                  <div className="section-content custom-scrollbar" onWheel={handleSectionScroll}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-6">
+                      {projects
+                        .filter((project) => projectFilter === "all" || project.type === projectFilter)
+                        .map((project, index) => (
+                          <ProjectCard
+                            key={project.title}
+                            title={project.title}
+                            description={project.description}
+                            link={project.link}
+                            type={project.type}
+                            delay={index * 0.1}
+                          />
+                        ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -511,7 +606,7 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="min-h-screen flex items-center sectionname"
+              className="min-h-screen flex items-center"
             >
               <div className="container mx-auto px-4 py-16">
                 <h2 className="text-4xl font-bold text-center mb-16">Contact</h2>
@@ -542,7 +637,7 @@ export default function Portfolio() {
                     >
                       <Card className="bg-card/50 backdrop-blur-sm">
                         <CardContent className="pt-6">
-                          <form onSubmit={handleSubmit} className="space-y-6">
+                          <form ref={formRef} onSubmit={handleSubmit} className="space-y-6" id="contactForm">
                             <div className="grid grid-cols-1 gap-4">
                               <div>
                                 <Input
@@ -571,7 +666,7 @@ export default function Portfolio() {
                                 className="min-h-[120px] bg-background/50"
                               />
                             </div>
-                            <Button type="submit" className="w-full group red">
+                            <Button type="submit" className="w-full group">
                               <Send className="mr-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                               Send Message
                             </Button>

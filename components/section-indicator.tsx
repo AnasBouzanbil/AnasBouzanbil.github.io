@@ -18,7 +18,7 @@ export default function SectionIndicator({ sections, activeSection, onChange }: 
           onClick={() => onChange(index)}
           className={cn(
             "w-3 h-3 rounded-full transition-all duration-300",
-            activeSection === index ? "selected scale-125" : "bg-green-500 hover:bg-primary/50",
+            activeSection === index ? "bg-primary scale-125" : "bg-muted hover:bg-primary/50",
           )}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}

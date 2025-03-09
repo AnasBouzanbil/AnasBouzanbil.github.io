@@ -3,12 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 
-interface CustomCursorProps {
-  theme: string;  // Use `string` instead of `String`
-}
-
-export default function CustomCursor({ theme }: CustomCursorProps) { 
-  // alert(theme)
+export default function CustomCursor() {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isPointer, setIsPointer] = useState(false)
 
@@ -19,12 +14,10 @@ export default function CustomCursor({ theme }: CustomCursorProps) {
       const target = e.target as HTMLElement
       setIsPointer(
         window.getComputedStyle(target).cursor === "pointer" ||
-        target.tagName === "BUTTON" ||
-        target.tagName === "A" ||
-        target.id === "profile-image" || // Added check for your specific image
-        target.classList.contains("img") || // Added check for elements with the "img" class
-        target.closest("button") !== null ||
-        target.closest("a") !== null
+          target.tagName === "BUTTON" ||
+          target.tagName === "A" ||
+          target.closest("button") !== null ||
+          target.closest("a") !== null,
       )
     }
 
@@ -51,7 +44,7 @@ export default function CustomCursor({ theme }: CustomCursorProps) {
           mass: 0.5,
         }}
         style={{
-          backgroundColor: isPointer ? "transparent" : theme === "light" ? "black" : "white",
+          backgroundColor: isPointer ? "transparent" : "white",
           border: isPointer ? "2px solid white" : "none",
         }}
       />
@@ -68,7 +61,7 @@ export default function CustomCursor({ theme }: CustomCursorProps) {
           mass: 1,
         }}
         style={{
-          background: theme === "dark" ? "radial-gradient(circle, rgba(255, 255, 255, 5) 40%, rgba(255, 255, 255, 0) 70%)" :  "radial-gradient(circle, rgba(249, 0, 77, 0.3) 20%, rgba(249, 0, 77, 0) 70%)",
+          background: "radial-gradient(circle, rgba(249, 0, 77, 0.3) 0%, rgba(249, 0, 77, 0) 70%)",
         }}
       />
     </>
