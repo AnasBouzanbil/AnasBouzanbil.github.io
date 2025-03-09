@@ -49,13 +49,9 @@ export default function Portfolio() {
   const [mounted, setMounted] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
   const [isEmailJSReady, setIsEmailJSReady] = useState(false)
-
-  // After mounting, we can safely show the UI that depends on the theme
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  // Initialize EmailJS when the component mounts
   useEffect(() => {
     if (typeof window !== "undefined" && window.emailjs && !isEmailJSReady) {
       window.emailjs.init({
@@ -67,7 +63,6 @@ export default function Portfolio() {
 
   const sections = ["home", "education", "skills", "projects", "contact"]
 
-  // Create a debounced version of setActiveSection
   const debouncedSetActiveSection = useRef(
     debounce((index: number) => {
       setActiveSection(index)
@@ -84,7 +79,6 @@ export default function Portfolio() {
     }
 
     const handleWheel = (e: WheelEvent) => {
-      // Check if we're scrolling inside a scrollable container
       const target = e.target as HTMLElement
       const scrollableContainer = target.closest(".section-content")
 
@@ -93,7 +87,6 @@ export default function Portfolio() {
         const isAtTop = scrollTop === 0
         const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5
 
-        // Only change sections if we're at the boundaries
         if ((isAtTop && e.deltaY < 0) || (isAtBottom && e.deltaY > 0)) {
           if (e.deltaY > 0 && activeSection < sections.length - 1) {
             debouncedSetActiveSection(activeSection + 1)
@@ -104,7 +97,6 @@ export default function Portfolio() {
         return
       }
 
-      // Normal section navigation for non-scrollable areas
       if (e.deltaY > 0 && activeSection < sections.length - 1) {
         debouncedSetActiveSection(activeSection + 1)
       } else if (e.deltaY < 0 && activeSection > 0) {
@@ -140,7 +132,7 @@ export default function Portfolio() {
           if (formRef.current) {
             formRef.current.reset()
           }
-          setActiveSection(0) // Go back to home section
+          setActiveSection(0);
         },
         (error) => {
           toast({
@@ -246,17 +238,12 @@ export default function Portfolio() {
     },
   ]
 
-  // Add this function to handle scroll within sections
   const handleSectionScroll = (e: React.WheelEvent) => {
-    // Get the current target element
     const target = e.currentTarget as HTMLElement
 
-    // Check if we're at the top or bottom of the scrollable area
     const isAtTop = target.scrollTop === 0
     const isAtBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 5
 
-    // If we're not at the top or bottom, or if we're scrolling in the direction
-    // that doesn't hit the boundary, prevent the default behavior
     if (!(isAtTop && e.deltaY < 0) && !(isAtBottom && e.deltaY > 0)) {
       e.stopPropagation()
     }
@@ -264,7 +251,6 @@ export default function Portfolio() {
 
   return (
     <div className="bg-background text-foreground min-h-screen overflow-hidden" onClick={handleClick}>
-      {/* Add EmailJS Script */}
       <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
 
       <CustomCursor />
@@ -314,7 +300,6 @@ export default function Portfolio() {
 
       <main className="pt-16">
         <AnimatePresence mode="wait">
-          {/* Home Section */}
           {activeSection === 0 && (
             <motion.section
               key="home"
