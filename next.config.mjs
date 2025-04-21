@@ -4,7 +4,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: { unoptimized: true },
-  assetPrefix: "./", // Needed for GitHub Pages/custom domain
+  assetPrefix: "/",
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
