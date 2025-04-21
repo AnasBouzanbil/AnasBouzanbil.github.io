@@ -1,16 +1,10 @@
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "export", // Enables static export
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  images: {
-    unoptimized: true,
-  },
+  output: "export",
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
+  images: { unoptimized: true },
+  assetPrefix: "./", // Needed for GitHub Pages/custom domain
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
@@ -21,13 +15,10 @@ const nextConfig = {
 mergeConfig(nextConfig, userConfig)
 
 function mergeConfig(nextConfig, userConfig) {
-  if (!userConfig) {
-    return
-  }
-
+  if (!userConfig) return;
   for (const key in userConfig) {
     if (
-      typeof nextConfig[key] === 'object' &&
+      typeof nextConfig[key] === "object" &&
       !Array.isArray(nextConfig[key])
     ) {
       nextConfig[key] = {
