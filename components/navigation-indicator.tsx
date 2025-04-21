@@ -2,26 +2,20 @@
 
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
-import { useMediaQuery } from "@/hooks/use-media-query"
 
-interface SectionIndicatorProps {
+interface NavigationIndicatorProps {
   count: number
   active: number
   onChange: (index: number) => void
   orientation?: "horizontal" | "vertical"
 }
 
-export default function SectionIndicator({
+export default function NavigationIndicator({
   count,
   active,
   onChange,
   orientation = "horizontal",
-}: SectionIndicatorProps) {
-  const isMobile = useMediaQuery("(max-width: 768px)")
-
-  // Don't render on mobile as we have a separate mobile indicator
-  if (isMobile) return null
-
+}: NavigationIndicatorProps) {
   return (
     <div
       className={cn(

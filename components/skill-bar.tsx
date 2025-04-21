@@ -30,4 +30,3 @@ export default function SkillBar({ name, level, delay = 0 }: SkillBarProps) {
     </div>
   )
 }
-

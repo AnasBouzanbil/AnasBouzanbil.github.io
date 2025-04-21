@@ -9,4 +9,3 @@ interface Window {
     ) => Promise<{ text: string }>
   }
 }
-
