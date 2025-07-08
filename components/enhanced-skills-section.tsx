@@ -199,9 +199,9 @@ export default function EnhancedSkillsSection() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12 h-full flex flex-col space-y-10">
+    <div className="container mx-auto px-4 py-12 h-full flex flex-col space-y-6 md:space-y-10">
       <motion.h2
-        className="text-5xl font-bold text-center mb-4 pt-4"
+        className="text-3xl md:text-5xl font-bold text-center mb-4 pt-4"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -209,33 +209,36 @@ export default function EnhancedSkillsSection() {
         Skills & Expertise
       </motion.h2>
 
-      <div className="flex flex-col flex-grow space-y-8">
+      <div className="flex flex-col flex-grow space-y-6 md:space-y-8">
         <Tabs value={selectedCategory} onValueChange={handleCategoryChange} className="w-full">
           <div className="flex justify-center">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <TabsList className="grid grid-cols-3 w-full max-w-md">
-                <TabsTrigger value="languages" className="relative">
-                  <span className="flex items-center gap-2">
-                    <Braces className="h-4 w-4" />
+              <TabsList className="grid grid-cols-3 w-full max-w-sm md:max-w-md">
+                <TabsTrigger value="languages" className="relative text-xs md:text-sm">
+                  <span className="flex items-center gap-1 md:gap-2">
+                    <Braces className="h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline">Languages</span>
+                    <span className="sm:hidden">Lang</span>
                   </span>
                   {selectedCategory === "languages" && (
                     <motion.div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" layoutId="activeTab" />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="frameworks" className="relative">
-                  <span className="flex items-center gap-2">
-                    <Layers className="h-4 w-4" />
+                <TabsTrigger value="frameworks" className="relative text-xs md:text-sm">
+                  <span className="flex items-center gap-1 md:gap-2">
+                    <Layers className="h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline">Frameworks</span>
+                    <span className="sm:hidden">Frame</span>
                   </span>
                   {selectedCategory === "frameworks" && (
                     <motion.div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" layoutId="activeTab" />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="technologies" className="relative">
-                  <span className="flex items-center gap-2">
-                    <Server className="h-4 w-4" />
+                <TabsTrigger value="technologies" className="relative text-xs md:text-sm">
+                  <span className="flex items-center gap-1 md:gap-2">
+                    <Server className="h-3 w-3 md:h-4 md:w-4" />
                     <span className="hidden sm:inline">Technologies</span>
+                    <span className="sm:hidden">Tech</span>
                   </span>
                   {selectedCategory === "technologies" && (
                     <motion.div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary" layoutId="activeTab" />
@@ -254,8 +257,8 @@ export default function EnhancedSkillsSection() {
           transition={{ duration: 0.3 }}
           className="text-center"
         >
-          <h3 className="text-2xl font-medium text-primary mb-1">{skillCategories[selectedCategory].name}</h3>
-          <p className="text-muted-foreground">
+          <h3 className="text-xl md:text-2xl font-medium text-primary mb-1">{skillCategories[selectedCategory].name}</h3>
+          <p className="text-muted-foreground text-sm md:text-base">
             {selectedCategory === "languages" && "Programming languages I've mastered over the years"}
             {selectedCategory === "frameworks" && "Frameworks and libraries I use to build applications"}
             {selectedCategory === "technologies" && "Technologies and tools I work with regularly"}
@@ -270,7 +273,7 @@ export default function EnhancedSkillsSection() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mobile-skills-grid md:grid"
             >
               {skillCategories[selectedCategory].skills.map((skill, index) => (
                 <motion.div

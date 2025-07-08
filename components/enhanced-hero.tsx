@@ -184,14 +184,14 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
       {/* Main content */}
       <div className="relative h-full flex flex-col justify-center">
         <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left column - Text content */}
-            <div className="order-2 md:order-1 z-10">
+            <div className="order-2 md:order-1 z-10 mobile-hero-content md:text-left">
               <motion.h3
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="text-xl text-primary mb-2 font-mono"
+                className="text-lg md:text-xl text-primary mb-2 font-mono"
               >
                 Hello, I'm
               </motion.h3>
@@ -200,12 +200,12 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-5xl md:text-7xl font-bold mb-2 tracking-tight"
+                className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 md:mb-2 tracking-tight leading-tight"
               >
                 Anas <span className="text-primary">Bouzanbil</span>
               </motion.h1>
 
-              <div className="h-16 relative overflow-hidden my-4">
+              <div className="h-16 md:h-16 relative overflow-hidden my-4">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeSlide}
@@ -213,20 +213,20 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                     animate={{ y: 0, opacity: 1 }}
                     exit={{ y: -50, opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="absolute"
+                    className="absolute w-full"
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
                       <div className="p-1.5 rounded-full bg-primary/10">{slides[activeSlide].icon}</div>
-                      <h2 className="text-2xl md:text-3xl font-semibold">{slides[activeSlide].title}</h2>
+                      <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold">{slides[activeSlide].title}</h2>
                     </div>
 
-                    <div className="flex flex-wrap gap-2 mt-2">
+                    <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
                       {slides[activeSlide].skills.map((skill, index) => (
                         <Badge
                           key={skill}
                           variant="outline"
                           className={cn(
-                            "bg-background/50 backdrop-blur-sm",
+                            "bg-background/50 backdrop-blur-sm text-xs sm:text-sm",
                             index % 2 === 0 ? "border-primary/30" : "border-pink-500/30",
                           )}
                         >
@@ -242,9 +242,9 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
-                className="text-muted-foreground mb-6 max-w-md text-lg"
+                className="text-muted-foreground mb-6 max-w-md text-base md:text-lg mx-auto md:mx-0"
               >
-                Passionate developer specializing in creating innovative web and mobile applications.<br></br><br></br> I can do anything
+                Passionate developer specializing in creating innovative web and mobile applications.<br className="hidden md:block"/><br className="hidden md:block"/> I can do anything
                 for fun, or money.
               </motion.p>
 
@@ -264,7 +264,7 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1, staggerChildren: 0.1 }}
-                className="flex flex-wrap gap-3"
+                className="flex flex-wrap gap-3 justify-center md:justify-start mobile-social-links"
               >
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}>
                   <Link href="https://medium.com/@Elhazin" target="_blank" rel="noopener noreferrer">
@@ -272,14 +272,15 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                       variant="outline"
                       size="icon"
                       aria-label="Medium"
-                      className="hover:scale-110 transition-transform"
+                      className="hover:scale-110 transition-transform w-10 h-10 md:w-12 md:h-12"
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        width="24"
-                        height="24"
+                        width="20"
+                        height="20"
                         fill="currentColor"
+                        className="md:w-6 md:h-6"
                       >
                         <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" />
                       </svg>
@@ -292,9 +293,9 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                       variant="outline"
                       size="icon"
                       aria-label="LinkedIn"
-                      className="hover:scale-110 transition-transform"
+                      className="hover:scale-110 transition-transform w-10 h-10 md:w-12 md:h-12"
                     >
-                      <Linkedin className="h-5 w-5" />
+                      <Linkedin className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                   </Link>
                 </motion.div>
@@ -304,9 +305,9 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                       variant="outline"
                       size="icon"
                       aria-label="GitHub"
-                      className="hover:scale-110 transition-transform"
+                      className="hover:scale-110 transition-transform w-10 h-10 md:w-12 md:h-12"
                     >
-                      <GitHub className="h-5 w-5" />
+                      <GitHub className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                   </Link>
                 </motion.div>
@@ -316,9 +317,9 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                       variant="outline"
                       size="icon"
                       aria-label="Email"
-                      className="hover:scale-110 transition-transform"
+                      className="hover:scale-110 transition-transform w-10 h-10 md:w-12 md:h-12"
                     >
-                      <Mail className="h-5 w-5" />
+                      <Mail className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                   </Link>
                 </motion.div>
@@ -327,13 +328,13 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.5 }}
-                  className="ml-auto"
+                  className="w-full md:w-auto md:ml-auto mt-4 md:mt-0"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <Button
                     onClick={() => onNavigate(4)}
-                    className="group relative overflow-hidden bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-500/90"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                    className="w-full md:w-auto group relative overflow-hidden bg-gradient-to-r from-primary to-pink-500 hover:from-primary/90 hover:to-pink-500/90"
                   >
                     <span className="relative z-10">Contact Me</span>
                     <ChevronDown className="ml-2 h-4 w-4 group-hover:translate-y-1 transition-transform relative z-10" />
@@ -347,15 +348,15 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
-              className="order-1 md:order-2 flex justify-center relative z-10"
+              className="order-1 md:order-2 flex justify-center relative z-10 mb-6 md:mb-0"
             >
-              <div className="hero-image-container">
+              <div className="hero-image-container mobile-hero-image">
                 {/* Decorative ring */}
                 <div className="hero-image-ring" />
 
                 {/* Decorative badges */}
                 <motion.div
-                  className="hero-badge hero-badge-1"
+                  className="hero-badge hero-badge-1 hidden md:block"
                   animate={{ y: [0, -10, 0] }}
                   transition={{ repeat: Number.POSITIVE_INFINITY, duration: 5 }}
                 >
@@ -363,15 +364,32 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                 </motion.div>
 
                 <motion.div
-                  className="hero-badge hero-badge-2"
+                  className="hero-badge hero-badge-2 hidden md:block"
                   animate={{ y: [0, 10, 0] }}
                   transition={{ repeat: Number.POSITIVE_INFINITY, duration: 5, delay: 1 }}
                 >
                   <Sparkles className="h-5 w-5 text-pink-500" />
                 </motion.div>
 
+                {/* Mobile floating badges */}
+                <motion.div
+                  className="absolute -top-2 -right-2 md:hidden bg-card shadow-lg rounded-full p-2 border border-border z-10"
+                  animate={{ y: [0, -5, 0] }}
+                  transition={{ repeat: Number.POSITIVE_INFINITY, duration: 3 }}
+                >
+                  <Code className="h-3 w-3 text-primary" />
+                </motion.div>
+
+                <motion.div
+                  className="absolute -bottom-2 -left-2 md:hidden bg-card shadow-lg rounded-full p-2 border border-border z-10"
+                  animate={{ y: [0, 5, 0] }}
+                  transition={{ repeat: Number.POSITIVE_INFINITY, duration: 3, delay: 1.5 }}
+                >
+                  <Sparkles className="h-3 w-3 text-pink-500" />
+                </motion.div>
+
                 {/* Glow effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-pink-500/20 rounded-full blur-3xl opacity-50 animate-pulse "></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-pink-500/20 rounded-full blur-3xl opacity-50 animate-pulse"></div>
 
                 {/* Profile image */}
                 <motion.div
@@ -381,11 +399,11 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                   className="relative rounded-full"
                 >
                   <Image
-                    src="https://media.licdn.com/dms/image/v2/D4E03AQH2vJ9qVTrFAg/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1730035143280?e=1747267200&v=beta&t=uLJ4i5--eRj5KsRs0obJw7-fbJpWESYRW1GAdVWTaGk"
+                    src="/AnasBouzanbil.jpeg"
                     alt="Anas Bouzanbil"
                     width={400}
                     height={400}
-                    className="rounded-full border-4 border-primary/50 shadow-xl transition-all duration-500 hover:border-primary object-cover"
+                    className="rounded-full border-4 border-primary/50 shadow-xl transition-all duration-500 hover:border-primary object-cover w-full h-full max-w-[250px] md:max-w-[400px]"
                     priority
                   />
                 </motion.div>

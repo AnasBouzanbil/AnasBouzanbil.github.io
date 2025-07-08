@@ -68,6 +68,11 @@
 
   /* Mobile: Allow vertical touch scrolling within specific containers */
   @media (max-width: 768px) {
+    html, body {
+      height: 100vh;
+      height: 100dvh; /* Dynamic viewport height for mobile */
+    }
+
     .section-content,
     .custom-scrollbar,
     .project-modal-content {
@@ -80,6 +85,59 @@
     /* Enable touch scrolling for the main container on mobile */
     main {
       touch-action: pan-y;
+    }
+
+    /* Improve mobile text readability */
+    h1 {
+      font-size: 2.5rem !important;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 2rem !important;
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: 1.5rem !important;
+      line-height: 1.4;
+    }
+
+    /* Better mobile spacing */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    /* Enhanced mobile hero section */
+    .mobile-hero-content {
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .mobile-hero-image {
+      max-width: 250px;
+      margin: 0 auto 2rem;
+    }
+
+    .mobile-social-links {
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    /* Mobile skills layout */
+    .mobile-skills-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    /* Mobile projects layout */
+    .mobile-projects-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
     }
   }
 }
@@ -118,20 +176,6 @@
   /* Hide scrollbar but allow scrolling */
   ::-webkit-scrollbar {
     display: none;
-  }
-
-  /* Hide default cursor on desktop */
-  @media (min-width: 769px) {
-    * {
-      cursor: none !important;
-    }
-  }
-
-  /* For mobile devices where custom cursor doesn't work well */
-  @media (max-width: 768px) {
-    * {
-      cursor: auto !important;
-    }
   }
 }
 
@@ -332,19 +376,19 @@ section {
   }
 
   .mobile-section-dots {
-    @apply fixed bottom-28 left-0 right-0 z-40 flex justify-center gap-2;
+    @apply fixed bottom-20 left-0 right-0 z-40 flex justify-center gap-3;
   }
 
   .mobile-section-dot {
-    @apply w-2 h-2 rounded-full transition-all;
+    @apply w-3 h-3 rounded-full transition-all duration-300;
   }
 
   .mobile-section-dot.active {
-    @apply bg-primary w-6;
+    @apply bg-primary w-8 scale-110;
   }
 
   .mobile-section-dot:not(.active) {
-    @apply bg-muted;
+    @apply bg-muted/60 hover:bg-muted cursor-pointer;
   }
 
   .mobile-nav-buttons {
@@ -352,7 +396,69 @@ section {
   }
 
   .mobile-nav-button {
-    @apply bg-card/80 backdrop-blur-sm p-3 rounded-full border border-border shadow-lg;
+    @apply bg-card/90 backdrop-blur-sm p-3 rounded-full border border-border shadow-xl hover:scale-105 transition-all duration-200;
+  }
+
+  /* Enhanced mobile bottom navigation */
+  .mobile-bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-xl border-t border-border;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-bottom-nav-content {
+    @apply flex justify-center items-center px-4 py-3;
+  }
+
+  .mobile-nav-item {
+    @apply flex-1 flex flex-col items-center gap-1 py-2 px-1 rounded-lg transition-all duration-200;
+  }
+
+  .mobile-nav-item.active {
+    @apply bg-primary/10 text-primary;
+  }
+
+  .mobile-nav-item:not(.active) {
+    @apply text-muted-foreground hover:text-foreground;
+  }
+
+  .mobile-nav-icon {
+    @apply w-5 h-5;
+  }
+
+  .mobile-nav-label {
+    @apply text-xs font-medium;
+  }
+
+  /* Mobile swipe indicators */
+  .mobile-swipe-indicator {
+    @apply fixed bottom-32 left-1/2 transform -translate-x-1/2 z-40;
+    @apply flex flex-col items-center gap-2 text-muted-foreground;
+  }
+
+  .swipe-arrows {
+    @apply flex flex-col gap-1;
+  }
+
+  .swipe-arrow {
+    @apply w-4 h-4 opacity-60;
+    animation: swipeHint 2s ease-in-out infinite;
+  }
+
+  .swipe-arrow:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+
+  .swipe-arrow:nth-child(3) {
+    animation-delay: 0.6s;
+  }
+
+  /* Mobile section transitions */
+  .mobile-section {
+    @apply min-h-screen pt-16 pb-24;
+  }
+
+  .mobile-section-content {
+    @apply px-4 py-6;
   }
 }
 

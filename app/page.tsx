@@ -11,12 +11,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import SectionIndicator from "@/components/section-indicator"
-import CustomCursor from "@/components/custom-cursor"
 import { useTheme } from "next-themes"
 import Script from "next/script"
 import ProjectSection from "@/components/project-section"
 import ScrollToTop from "@/components/scroll-to-top"
-import StickyHeader from "@/components/sticky-header"
+import GSAPHeader from "@/components/gsap-header"
 import EducationTimeline from "@/components/education-timeline"
 import AIChat from "@/components/ai-chat"
 import EnhancedHero from "@/components/enhanced-hero"
@@ -24,6 +23,8 @@ import type { ProjectDetails } from "@/components/project-modal"
 import EnhancedSkillsSection from "@/components/enhanced-skills-section"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useTouchNavigation } from "@/hooks/use-touch-navigation"
+import StickyHeader from "@/components/sticky-header"
+import MobileBottomNav from "@/components/mobile-bottom-nav"
 
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState(0)
@@ -232,27 +233,17 @@ export default function Portfolio() {
     <div className="bg-background text-foreground min-h-screen overflow-hidden">
       <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
 
-      {!isMobile && <CustomCursor />}
       <ScrollToTop />
 
       <StickyHeader sections={sections} activeSection={activeSection} onChange={navigateToSection} />
 
-      {/* Mobile navigation hint */}
-      {isMobile && (
-        <div className="fixed bottom-4 left-0 right-0 z-50 flex justify-center pointer-events-none">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 2 }}
-            className="bg-card/80 backdrop-blur-sm px-4 py-2 rounded-full border border-border shadow-lg text-sm text-center"
-          >
-            Swipe up/down to navigate
-          </motion.div>
-        </div>
+      {!isMobile && (
+        <SectionIndicator count={sections.length} active={activeSection} onChange={navigateToSection} />
       )}
 
-      {!isMobile && (
-        <SectionIndicator sections={sections.length} activeSection={activeSection} onChange={navigateToSection} />
+      {/* Mobile Bottom Navigation */}
+      {isMobile && (
+        <MobileBottomNav sections={sections} activeSection={activeSection} onChange={navigateToSection} />
       )}
 
       <main className="fixed inset-0 w-full h-full">
