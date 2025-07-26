@@ -26,22 +26,22 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
   // Slides for the hero section
   const slides = [
     {
-      title: "Developer",
+      title: "Full-Stack Developer",
       color: "from-primary/20 to-pink-500/20",
       icon: <Code className="h-5 w-5" />,
-      skills: ["Full-Stack", "Mobile", "Web", "C/C++"],
+      skills: ["React", "Node.js", "TypeScript", "Mobile"],
     },
     {
-      title: "Creator",
+      title: "Problem Solver",
       color: "from-blue-500/20 to-purple-500/20",
       icon: <Sparkles className="h-5 w-5" />,
-      skills: [ "Innovation", "Problem Solving"],
+      skills: ["Innovation", "Clean Code", "Performance"],
     },
     {
-      title: "Learner",
+      title: "Continuous Learner",
       color: "from-green-500/20 to-teal-500/20",
       icon: <ExternalLink className="h-5 w-5" />,
-      skills: ["AI", "Machine Learning", "Data Science", "New Technologies"],
+      skills: ["AI/ML", "New Technologies", "Best Practices"],
     },
   ]
 
@@ -244,8 +244,8 @@ export default function EnhancedHero({ onNavigate }: EnhancedHeroProps) {
                 transition={{ delay: 0.8 }}
                 className="text-muted-foreground mb-6 max-w-md text-base md:text-lg mx-auto md:mx-0"
               >
-                Passionate developer specializing in creating innovative web and mobile applications.<br className="hidden md:block"/><br className="hidden md:block"/> I can do anything
-                for fun, or money.
+                Passionate full-stack developer creating innovative web and mobile applications.<br className="hidden md:block"/><br className="hidden md:block"/> 
+                Specializing in React, Node.js, and Flutter with a focus on clean code and user experience.
               </motion.p>
 
               {/* Slide indicators */}

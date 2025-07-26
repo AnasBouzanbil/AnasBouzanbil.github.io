@@ -15,12 +15,11 @@ import { useTheme } from "next-themes"
 import Script from "next/script"
 import ProjectSection from "@/components/project-section"
 import ScrollToTop from "@/components/scroll-to-top"
-import GSAPHeader from "@/components/gsap-header"
 import EducationTimeline from "@/components/education-timeline"
 import AIChat from "@/components/ai-chat"
 import EnhancedHero from "@/components/enhanced-hero"
 import type { ProjectDetails } from "@/components/project-modal"
-import EnhancedSkillsSection from "@/components/enhanced-skills-section"
+
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useTouchNavigation } from "@/hooks/use-touch-navigation"
 import StickyHeader from "@/components/sticky-header"
@@ -28,6 +27,8 @@ import MobileBottomNav from "@/components/mobile-bottom-nav"
 
 export default function Portfolio() {
   const [activeSection, setActiveSection] = useState(0)
+  const [navigationMode, setNavigationMode] = useState<'section' | 'scroll'>('section')
+  const [sectionCompleted, setSectionCompleted] = useState(false)
   const { toast } = useToast()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -49,39 +50,153 @@ export default function Portfolio() {
     }
   }, [isEmailJSReady])
 
-  const sections = ["home", "education", "skills", "projects", "contact"]
+  // Check if current section is completed
+  useEffect(() => {
+    const checkSectionCompletion = () => {
+      const currentSection = document.querySelector(`[data-section="${activeSection}"]`)
+      if (currentSection) {
+        const scrollableContent = currentSection.querySelector('.custom-scrollbar, .overflow-y-auto')
+        if (scrollableContent) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollableContent as HTMLElement
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5
+          setSectionCompleted(isAtBottom)
+        } else {
+          // If no scrollable content, section is always completed
+          setSectionCompleted(true)
+        }
+      }
+    }
 
-  // Handle section navigation with debounce
-  const navigateToSection = (index: number) => {
+    // Check on mount and scroll
+    checkSectionCompletion()
+    
+    const currentSection = document.querySelector(`[data-section="${activeSection}"]`)
+    if (currentSection) {
+      const scrollableContent = currentSection.querySelector('.custom-scrollbar, .overflow-y-auto')
+      if (scrollableContent) {
+        scrollableContent.addEventListener('scroll', checkSectionCompletion)
+        return () => scrollableContent.removeEventListener('scroll', checkSectionCompletion)
+      }
+    }
+  }, [activeSection])
+
+  const sections = ["home", "education", "projects", "contact"]
+
+  // Enhanced scroll method with smooth transitions
+  const smoothScrollToSection = (index: number) => {
     if (isNavigating || index < 0 || index >= sections.length || index === activeSection) return
 
+    // Check if user has completely finished the current section content
+    const currentSection = document.querySelector(`[data-section="${activeSection}"]`)
+    if (currentSection) {
+      const scrollableContent = currentSection.querySelector('.custom-scrollbar, .overflow-y-auto')
+      if (scrollableContent) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollableContent as HTMLElement
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5 // 5px tolerance
+        
+        // If not at bottom and trying to go to next section, prevent navigation
+        if (index > activeSection && !isAtBottom) {
+          // Show a more prominent hint to scroll down with artistic animation
+          const hint = document.createElement('div')
+          hint.className = 'fixed bottom-24 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-primary to-pink-500 text-white px-6 py-3 rounded-xl text-sm font-medium z-50 shadow-2xl backdrop-blur-sm border border-white/20'
+          hint.innerHTML = `
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <svg class="w-5 h-5 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+                <div class="absolute inset-0 bg-white/20 rounded-full blur-sm animate-ping"></div>
+              </div>
+              <span class="font-semibold">Scroll to navigate</span>
+            </div>
+          `
+          document.body.appendChild(hint)
+          
+          // Add floating particles around the hint
+          for (let i = 0; i < 3; i++) {
+            const particle = document.createElement('div')
+            particle.className = `absolute w-2 h-2 bg-white/60 rounded-full animate-pulse`
+            particle.style.left = `${Math.random() * 100}%`
+            particle.style.top = `${Math.random() * 100}%`
+            particle.style.animationDelay = `${i * 0.5}s`
+            hint.appendChild(particle)
+          }
+          
+          setTimeout(() => {
+            if (document.body.contains(hint)) {
+              document.body.removeChild(hint)
+            }
+          }, 4000)
+          return
+        }
+      }
+    }
+
     setIsNavigating(true)
+    
+    // Add artistic transition effect
+    const transitionOverlay = document.createElement('div')
+    transitionOverlay.className = 'fixed inset-0 bg-gradient-to-br from-primary/20 via-pink-500/20 to-purple-500/20 z-40 pointer-events-none'
+    transitionOverlay.style.backdropFilter = 'blur(10px)'
+    document.body.appendChild(transitionOverlay)
+    
+    // Animate the overlay
+    const overlayAnimation = transitionOverlay.animate([
+      { opacity: 0, transform: 'scale(0.8)' },
+      { opacity: 1, transform: 'scale(1)' },
+      { opacity: 0, transform: 'scale(1.2)' }
+    ], {
+      duration: 800,
+      easing: 'cubic-bezier(0.4, 0.0, 0.2, 1)'
+    })
+    
+    overlayAnimation.onfinish = () => {
+      document.body.removeChild(transitionOverlay)
+    }
+    
     setActiveSection(index)
 
     // Reset navigation lock after animation completes
     setTimeout(() => {
       setIsNavigating(false)
-    }, 800)
+    }, 1200) // Increased duration for artistic transitions
   }
 
-  // Handle wheel events for desktop
+  // Add navigation mode toggle
+  const toggleNavigationMode = () => {
+    setNavigationMode(prev => prev === 'section' ? 'scroll' : 'section')
+  }
+
+  // Disable wheel navigation - users must use buttons or keyboard
   useEffect(() => {
     if (isMobile) return
 
-    // const handleWheel = (e: WheelEvent) => {
-    //   e.preventDefault()
+    const handleWheel = (e: WheelEvent) => {
+      // Only prevent default if trying to navigate sections
+      if (isNavigating) {
+        e.preventDefault()
+        return
+      }
+      
+      // Allow normal scrolling within sections
+      const currentSection = document.querySelector(`[data-section="${activeSection}"]`)
+      if (currentSection) {
+        const scrollableContent = currentSection.querySelector('.custom-scrollbar, .overflow-y-auto')
+        if (scrollableContent) {
+          const { scrollTop, scrollHeight, clientHeight } = scrollableContent as HTMLElement
+          const isAtBottom = scrollTop + clientHeight >= scrollHeight - 5
+          const isAtTop = scrollTop <= 5
+          
+          // Only prevent wheel navigation if at boundaries and trying to go beyond
+          if ((isAtBottom && e.deltaY > 0) || (isAtTop && e.deltaY < 0)) {
+            e.preventDefault()
+          }
+        }
+      }
+    }
 
-    //   if (isNavigating) return
-
-    //   if (e.deltaY > 50) {
-    //     navigateToSection(activeSection + 1)
-    //   } else if (e.deltaY < -50) {
-    //     navigateToSection(activeSection - 1)
-    //   }
-    // }
-
-    // window.addEventListener("wheel", handleWheel, { passive: false })
-    // return () => window.removeEventListener("wheel", handleWheel)
+    window.addEventListener("wheel", handleWheel, { passive: false })
+    return () => window.removeEventListener("wheel", handleWheel)
   }, [activeSection, isNavigating, isMobile])
 
   // Handle keyboard navigation
@@ -90,9 +205,9 @@ export default function Portfolio() {
       if (isNavigating) return
 
       if (e.key === "ArrowDown" || e.key === "ArrowRight") {
-        navigateToSection(activeSection + 1)
+        smoothScrollToSection(activeSection + 1)
       } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
-        navigateToSection(activeSection - 1)
+        smoothScrollToSection(activeSection - 1)
       }
     }
 
@@ -102,8 +217,8 @@ export default function Portfolio() {
 
   // Use touch navigation hook for mobile
   useTouchNavigation({
-    onNext: () => navigateToSection(activeSection + 1),
-    onPrev: () => navigateToSection(activeSection - 1),
+    onNext: () => smoothScrollToSection(activeSection + 1),
+    onPrev: () => smoothScrollToSection(activeSection - 1),
     disabled: isNavigating || !isMobile,
     threshold: 70,
   })
@@ -230,20 +345,97 @@ export default function Portfolio() {
   ]
 
   return (
-    <div className="bg-background text-foreground min-h-screen overflow-hidden">
+    <div className="bg-background text-foreground min-h-screen overflow-hidden relative">
       <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
+
+      {/* Artistic background elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        {/* Floating particles */}
+        {Array.from({ length: 20 }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 bg-primary/30 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100, 0],
+              opacity: [0, 1, 0],
+              scale: [0, 1, 0],
+            }}
+            transition={{
+              duration: Math.random() * 3 + 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+        
+        {/* Gradient orbs */}
+        <motion.div
+          className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        <motion.div
+          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.7, 0.4],
+            x: [0, -40, 0],
+            y: [0, 60, 0],
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        />
+        
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-r from-primary/5 to-pink-500/5 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.2, 0.5, 0.2],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 4
+          }}
+        />
+      </div>
 
       <ScrollToTop />
 
-      <StickyHeader sections={sections} activeSection={activeSection} onChange={navigateToSection} />
+      <StickyHeader sections={sections} activeSection={activeSection} onChange={smoothScrollToSection} />
 
       {!isMobile && (
-        <SectionIndicator count={sections.length} active={activeSection} onChange={navigateToSection} />
+        <SectionIndicator 
+          count={sections.length} 
+          active={activeSection} 
+          onChange={smoothScrollToSection}
+          completedSections={sectionCompleted ? [activeSection] : []}
+        />
       )}
 
       {/* Mobile Bottom Navigation */}
       {isMobile && (
-        <MobileBottomNav sections={sections} activeSection={activeSection} onChange={navigateToSection} />
+        <MobileBottomNav sections={sections} activeSection={activeSection} onChange={smoothScrollToSection} />
       )}
 
       <main className="fixed inset-0 w-full h-full">
@@ -251,13 +443,17 @@ export default function Portfolio() {
           {activeSection === 0 && (
             <motion.section
               key="home"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              data-section="0"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.4, 0.0, 0.2, 1]
+              }}
               className="w-full h-full"
             >
-              <EnhancedHero onNavigate={navigateToSection} />
+              <EnhancedHero onNavigate={smoothScrollToSection} />
             </motion.section>
           )}
 
@@ -265,49 +461,97 @@ export default function Portfolio() {
           {activeSection === 1 && (
             <motion.section
               key="education"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full h-full flex items-center overflow-hidden mt-[50px]"
+              data-section="1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.4, 0.0, 0.2, 1]
+              }}
+              className="w-full h-full overflow-y-auto education-scrollbar"
             >
-              <div className="container mx-auto px-4 py-16 overflow-y-auto max-h-full custom-scrollbar mt-[50px] mb-[20px]">
-                <motion.h2
-                  className="text-5xl font-bold text-center mb-8"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  Education
-                </motion.h2>
+              <div className="min-h-full relative">
+                {/* Floating background elements */}
+                <div className="fixed inset-0 pointer-events-none overflow-hidden">
+                  <motion.div
+                    className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-full blur-3xl"
+                    initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
+                    whileInView={{ scale: 1, opacity: 0.3, x: 50, y: -30 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 3,
+                      ease: "easeOut"
+                    }}
+                  />
+                  <motion.div
+                    className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-full blur-3xl"
+                    initial={{ scale: 0, opacity: 0, x: 0, y: 0 }}
+                    whileInView={{ scale: 1, opacity: 0.4, x: -40, y: 60 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 3.5,
+                      ease: "easeOut",
+                      delay: 0.5
+                    }}
+                  />
+                  <motion.div
+                    className="absolute top-1/2 left-1/2 w-96 h-96 bg-gradient-to-r from-primary/3 to-pink-500/3 rounded-full blur-3xl"
+                    initial={{ scale: 0, opacity: 0, rotate: 0 }}
+                    whileInView={{ scale: 1, opacity: 0.2, rotate: 180 }}
+                    viewport={{ once: true }}
+                    transition={{
+                      duration: 4,
+                      ease: "easeOut",
+                      delay: 1
+                    }}
+                  />
+                </div>
 
-                <EducationTimeline />
+                <div className="container mx-auto px-4 py-12 relative z-10">
+                  <motion.div
+                    className="text-center mb-16"
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                  >
+                    <motion.h2
+                      className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-pink-500 to-purple-500 bg-clip-text text-transparent"
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      Education Journey
+                    </motion.h2>
+                    <motion.p
+                      className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: 0.6 }}
+                    >
+                      My academic path has been a blend of technical excellence and cultural exploration, 
+                      shaping me into a well-rounded developer with a unique perspective.
+                    </motion.p>
+                  </motion.div>
+
+                  <EducationTimeline />
+                </div>
               </div>
             </motion.section>
           )}
 
-          {/* Skills Section */}
+          {/* Projects Section */}
           {activeSection === 2 && (
             <motion.section
-              key="skills"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="w-full h-full flex items-center overflow-hidden mt-[50px]"
-            >
-              <EnhancedSkillsSection />
-            </motion.section>
-          )}
-
-          {/* Projects Section */}
-          {activeSection === 3 && (
-            <motion.section
               key="projects"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              data-section="3"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.4, 0.0, 0.2, 1]
+              }}
               className="w-full h-full overflow-hidden mt-[50px]"
             >
               <div className="h-full overflow-y-auto custom-scrollbar">
@@ -317,23 +561,27 @@ export default function Portfolio() {
           )}
 
           {/* Contact Section */}
-          {activeSection === 4 && (
+          {activeSection === 3 && (
             <motion.section
               key="contact"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
+              data-section="4"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ 
+                duration: 0.8,
+                ease: [0.4, 0.0, 0.2, 1]
+              }}
               className="w-full h-full flex items-center overflow-hidden"
             >
-              <div className="container mx-auto px-4 py-16 overflow-y-auto max-h-full custom-scrollbar">
+              <div className="container mx-auto px-4 py-8 overflow-y-auto max-h-full custom-scrollbar">
                 <motion.h2
-                  className="text-5xl font-bold text-center mb-16"
+                  className="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-pink-500 to-purple-500 bg-clip-text text-transparent"
                   initial={{ opacity: 0, y: -20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
                 >
-                  Contact
+                  Let's Connect
                 </motion.h2>
                 <div className="max-w-6xl mx-auto">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -419,7 +667,7 @@ export default function Portfolio() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-card/80 backdrop-blur-sm p-3 rounded-full border border-border shadow-lg"
-              onClick={() => navigateToSection(activeSection - 1)}
+              onClick={() => smoothScrollToSection(activeSection - 1)}
               aria-label="Previous section"
             >
               <ChevronUp className="h-5 w-5" />
@@ -430,15 +678,22 @@ export default function Portfolio() {
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-card/80 backdrop-blur-sm p-3 rounded-full border border-border shadow-lg"
-              onClick={() => navigateToSection(activeSection + 1)}
+              className={`p-3 rounded-full border shadow-lg transition-all duration-300 ${
+                sectionCompleted 
+                  ? 'bg-primary text-white border-primary shadow-primary/25' 
+                  : 'bg-card/80 backdrop-blur-sm border-border'
+              }`}
+              onClick={() => smoothScrollToSection(activeSection + 1)}
+              disabled={!sectionCompleted}
               aria-label="Next section"
             >
-              <ChevronDown className="h-5 w-5" />
+              <ChevronDown className={`h-5 w-5 ${sectionCompleted ? 'animate-pulse' : ''}`} />
             </motion.button>
           )}
         </div>
       )}
+
+
 
       {/* Mobile section indicator dots */}
       {isMobile && (
@@ -449,7 +704,7 @@ export default function Portfolio() {
               className={`w-2 h-2 rounded-full transition-all ${
                 activeSection === index ? "bg-primary w-6" : "bg-muted"
               }`}
-              onClick={() => navigateToSection(index)}
+              onClick={() => smoothScrollToSection(index)}
               aria-label={`Go to ${sections[index]} section`}
             />
           ))}

@@ -14,7 +14,6 @@ export default function MobileBottomNav({ sections, activeSection, onChange }: M
   const navIcons = [
     { icon: Home, label: "Home" },
     { icon: GraduationCap, label: "Education" },
-    { icon: Code, label: "Skills" },
     { icon: FolderOpen, label: "Projects" },
     { icon: Mail, label: "Contact" },
   ]
