@@ -348,6 +348,15 @@ export default function Portfolio() {
     <div className="bg-background text-foreground min-h-screen overflow-hidden relative">
       <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
 
+      {/* Top section progress bar */}
+      <motion.div
+        key="top-progress-bar"
+        className="fixed top-0 left-0 h-1 z-50 bg-gradient-to-r from-primary via-pink-500 to-purple-500"
+        initial={{ width: 0 }}
+        animate={{ width: `${(activeSection / (sections.length - 1)) * 100}%` }}
+        transition={{ duration: 0.6, ease: "easeInOut" }}
+      />
+
       {/* Artistic background elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         {/* Floating particles */}
@@ -508,32 +517,7 @@ export default function Portfolio() {
                   />
                 </div>
 
-                <div className="container mx-auto px-4 py-12 relative z-10">
-                  <motion.div
-                    className="text-center mb-16"
-                    initial={{ opacity: 0, y: -30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  >
-                    <motion.h2
-                      className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-pink-500 to-purple-500 bg-clip-text text-transparent"
-                      initial={{ opacity: 0, y: -20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: 0.4 }}
-                    >
-                      Education Journey
-                    </motion.h2>
-                    <motion.p
-                      className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: 0.6 }}
-                    >
-                      My academic path has been a blend of technical excellence and cultural exploration, 
-                      shaping me into a well-rounded developer with a unique perspective.
-                    </motion.p>
-                  </motion.div>
-
+                <div className="relative z-10">
                   <EducationTimeline />
                 </div>
               </div>
