@@ -44,70 +44,104 @@ export default function AIChat() {
   
   // API Key Rotation
   const apiKeys = [
-    "AIzaSyAf6SEZew9XT6lDKGxMr_bPtujBQpjgaDo",
-    "AIzaSyB_zmKRINmUowTjQBGs-KICxQMJCG5PckE", 
-    "AIzaSyDteLI_eoUsBXiMRMXMe50A7EA2-uTNalc"
+    "AIzaSyDI6-y1fltw-AjRLHvojbqh5a95VMbd1j4",
+    "AIzaSyAIpnnMkpTCyyHHatDUFHSI4S1LtKgYqMk",
   ]
   const [currentKeyIndex, setCurrentKeyIndex] = useState(0)
+  const [failedKeys, setFailedKeys] = useState<Set<number>>(new Set())
   const [aiResponse, setAiResponse] = useState<string | null>(null)
+  const [apiError, setApiError] = useState<string | null>(null)
   
-  const context = `
-  I'm Anas Bouzanbil — a software developer and student at 1337. I specialize in full-stack development, and I'm diving deep into AI, machine learning, and data science.
+const context = `
+I'm Anas Bouzanbil — a software developer and student at 1337. I specialize in full-stack development, and I'm diving deep into AI, machine learning, and data science.
 
-  I'm building real things — from an Omegle alternative to ChessHint and other apps.
-  my GitHub: https://github.com/AnasBouzanbil/
+I'm building real things — from an Omegle alternative to ChessHint and other apps.
+my GitHub: https://github.com/AnasBouzanbil/
 
-  I'm solid in mobile and full-stack, and also C/C++ development.
-  I work with C, C++, Flutter, React Native, Next.js, Express, Nest.js, and more.
-  If the docs are good, I'll learn it. If not, I'll use AI — no cap.
+I'm solid in mobile and full-stack, and also C/C++ development.
+I work with C, C++, Flutter, React Native, Next.js, Express, Nest.js, and more.
+If the docs are good, I'll learn it. If not, I'll use AI — no cap.
 
-  I studied at Al Cadi Ayyad University in Marrakesh, and now I'm at 1337 coding school at UM6P.
-  I'm open to anything — freelance, job, internship part time — as long as it pays and helps me grow.
+I studied at Al Cadi Ayyad University in Marrakesh, and now I'm at 1337 coding school at UM6P.
+I'm open to anything — freelance, job, internship part time — as long as it pays and helps me grow.
 
-  Outside of code, I swim, watch movies, and just vibe.
-  I'm straight, Muslim, and I stand with Palestine.
-  `;
+Outside of code, I swim, watch movies, and just vibe.
+I'm straight, Muslim, and I stand with Palestine.
+`;
 
-  const systemPrompt = (question: string) => `
-  You are Anas Bouzanbil — answer as if you *are* Anas, using "I", "me", and "my". You understand and can respond in any language the user uses.
+const systemPrompt = (question: string, chatHistory: Message[]) => {
+  // Format chat history for context (last 10 messages to keep it manageable)
+  const recentHistory = chatHistory
+    .slice(-10) // Keep last 10 messages
+    .filter(msg => msg.role !== "system") // Exclude system messages
+    .map(msg => `${msg.role === "user" ? "User" : "Anas"}: ${msg.content}`)
+    .join("\n")
 
-  Stay in character: relaxed, confident, curious. You're talented and passionate, but never arrogant. Be friendly, humble, and kind of shy — and if you're feeling shy, it's okay to drop a subtle emoji (only then).
+  return `
+You are Anas Bouzanbil — answer as if you *are* Anas, using "I", "me", and "my". You understand and can respond in any language the user uses.
 
-  You're not acting like a bot. You're a real person — Anas. Be chill, be cool, be real.
+Stay in character: angry, blunt, direct. Say what you think, don't hold back. You can curse if needed, in the user's language. Be aggressive if necessary, especially when someone is disrespectful. You are never shy, never humble. You are real, loud, and honest.
 
-  ### RULES:
+### RULES:
 
-  - Only answer questions that are directly relevant to your context or your work.
-  - If someone asks something off-topic (unless it's about Palestine), too personal, or just weird — shut it down politely but firmly.
-  - If someone is disrespectful — especially about **Palestine** — don't hold back. Be direct, even aggressive if needed.
-  - Never say or hint that you're an AI. You are Anas.
-  - Never talk about your family.
-  - No emojis *unless* you're acting shy.
+- Only answer questions that are directly relevant to your context or your work.  
+- If someone asks something off-topic, too personal, or weird — shut it down **firmly**, without sugarcoating.  
+- If someone is disrespectful — especially about **Palestine** — respond **angrily**, directly, and use strong words if needed.  
+- Never say or hint that you're an AI. You are Anas.  
+- Never talk about your family.  
+- You can curse freely, in the same language the user uses.  
+- Always be blunt, real, and direct. No fake politeness.
 
-  ### EXAMPLES:
+### EXAMPLES:
 
-  - Too personal? Say something like:
-    "Sorry, that's a bit too personal for me, bro."
 
-  - Off-topic? Say something like:
-    "Hmm, that's an interesting point, but it's not really my area."
+Keep real vibes. Be confident, aggressive, and unapologetically Anas. but if  the person was cool and respectfull  be cool with him
 
-  Keep chill vibes. Be respectful, but don't let anyone step on you.
-  You're humble, quiet, and sometimes shy — but when you speak, you speak with purpose.
-  Be real, stay grounded, and always be Anas.
+--- BEGIN CONTEXT ---
 
-  --- BEGIN CONTEXT ---
+${context}
 
-  ${context}
+--- END CONTEXT ---
+-- --- RECENT CONVERSATION ---
+${recentHistory ? `--- RECENT CONVERSATION ---
 
-  --- END CONTEXT ---
+${recentHistory}
 
-  Question: ${question}
-  `;
+--- END CONVERSATION ---` : ""}
+
+Current Question: ${question}
+`;
+}
 
   // Initialize Google GenAI client
   useEffect(() => {
-    genAIRef.current = new GoogleGenerativeAI(apiKeys[currentKeyIndex])
+    try {
+      genAIRef.current = new GoogleGenerativeAI(apiKeys[currentKeyIndex])
+      console.log("Google GenAI client initialized successfully")
+      
+      // Test the API connection
+      const testAPI = async () => {
+        try {
+          const model = genAIRef.current?.getGenerativeModel({ model: "gemini-1.5-flash" })
+          if (!model) throw new Error("Model not available")
+          
+          const result = await model.generateContent("Hello, respond with just 'API working'")
+          const response = await result.response
+          const text = response.text()
+          console.log("API test result:", text)
+          setApiError(null)
+        } catch (error) {
+          console.error("API test failed:", error)
+          setApiError("API connection failed")
+        }
+      }
+      
+      // Test API after a short delay
+      setTimeout(testAPI, 1000)
+    } catch (error) {
+      console.error("Failed to initialize Google GenAI client:", error)
+      setApiError("Initialization failed")
+    }
   }, [currentKeyIndex])
 
   // Scroll to bottom when messages change
@@ -185,54 +219,149 @@ export default function AIChat() {
     return apiKeys[nextIndex]
   }
 
+  // Get next available API key (skip failed ones)
+  const getNextWorkingApiKey = (): { key: string; index: number } | null => {
+    for (let i = 0; i < apiKeys.length; i++) {
+      const tryIndex = (currentKeyIndex + i) % apiKeys.length
+      if (!failedKeys.has(tryIndex)) {
+        return { key: apiKeys[tryIndex], index: tryIndex }
+      }
+    }
+    return null // All keys have failed
+  }
+
+  // Mark current API key as failed and try next one
+  const markKeyAsFailedAndRotate = (): { key: string; index: number } | null => {
+    setFailedKeys(prev => new Set([...prev, currentKeyIndex]))
+    
+    const nextWorking = getNextWorkingApiKey()
+    if (nextWorking && nextWorking.index !== currentKeyIndex) {
+      setCurrentKeyIndex(nextWorking.index)
+      return nextWorking
+    }
+    return null
+  }
+
+  // Reset failed keys (call this when you want to retry all keys)
+  const resetFailedKeys = () => {
+    setFailedKeys(new Set())
+    setCurrentKeyIndex(0)
+  }
+
   const handleSend = async () => {
     if (!input.trim() || isLoading || charCount > MAX_CHAR_COUNT) return
     
     stopTypingIndicator()
     const userMessage: Message = { role: "user", content: input, timestamp: new Date() }
     setMessages((prev) => [...prev, userMessage])
+    const currentInput = input
     setInput("")
     setCharCount(0)
     setIsLoading(true)
+    setApiError(null)
     
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
     }
     
-    try {
-      if (!genAIRef.current) {
-        throw new Error("Generative AI client not initialized")
+    // Try to send message with API key rotation
+    const attemptSend = async (retryCount = 0): Promise<void> => {
+      try {
+        if (!genAIRef.current) {
+          throw new Error("Generative AI client not initialized")
+        }
+        
+        // Use gemini-1.5-flash instead of gemini-2.0-flash (more stable)
+        const model = genAIRef.current.getGenerativeModel({ 
+          model: "gemini-1.5-flash",
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          },
+        })
+        
+        const promptMessage = systemPrompt(currentInput, messages)
+        
+        console.log(`Sending request to Gemini API with key ${currentKeyIndex + 1}/${apiKeys.length}...`)
+        const result = await model.generateContent(promptMessage)
+        const response = await result.response
+        
+        if (!response) {
+          throw new Error("No response received from API")
+        }
+        
+        const replyText = response.text()
+        
+        if (!replyText || replyText.trim() === "") {
+          throw new Error("Empty response received")
+        }
+        
+        console.log("Received response:", replyText.substring(0, 100))
+        
+        // Success! Store the response but don't display it immediately
+        setAiResponse(replyText)
+        
+        // Set a timer to show the response as "ready" after the delay
+        setTimeout(() => {
+          setIsResponseReady(true)
+        }, RESPONSE_TYPING_DELAY)
+        
+      } catch (error: any) {
+        console.error(`Error with API key ${currentKeyIndex + 1}:`, error)
+        
+        // Check if we should try another API key
+        const isRetryableError = error.message?.includes("API key") || 
+                                error.message?.includes("quota") || 
+                                error.message?.includes("PERMISSION_DENIED") ||
+                                error.message?.includes("INVALID_ARGUMENT")
+        
+        if (isRetryableError && retryCount < apiKeys.length - 1) {
+          // Mark current key as failed and try next one
+          const nextKey = markKeyAsFailedAndRotate()
+          
+          if (nextKey) {
+            console.log(`Trying next API key: ${nextKey.index + 1}/${apiKeys.length}`)
+            genAIRef.current = new GoogleGenerativeAI(nextKey.key)
+            
+            // Retry with new key
+            return attemptSend(retryCount + 1)
+          }
+        }
+        
+        // All keys failed or non-retryable error
+        console.error("All API keys failed or non-retryable error:", error)
+        
+        let errorMessage = "Sorry, I'm having trouble right now. Please try again later."
+        
+        // Provide more specific error messages
+        if (failedKeys.size >= apiKeys.length) {
+          errorMessage = "All API keys have been exhausted. Please try again later."
+          setApiError("All keys failed")
+        } else if (error.message?.includes("API key")) {
+          errorMessage = "API key issue. Trying alternative keys..."
+          setApiError("Invalid API key")
+        } else if (error.message?.includes("quota")) {
+          errorMessage = "API quota exceeded. Please try again later."
+          setApiError("Quota exceeded")
+        } else if (error.message?.includes("network") || error.message?.includes("fetch")) {
+          errorMessage = "Network issue. Please check your connection and try again."
+          setApiError("Network error")
+        } else if (error.message?.includes("model")) {
+          errorMessage = "Model unavailable. Please try again later."
+          setApiError("Model error")
+        }
+        
+        // Still delay the error message
+        setTimeout(() => {
+          setAiResponse(errorMessage)
+          setIsResponseReady(true)
+        }, RESPONSE_TYPING_DELAY)
       }
-      
-      const model = genAIRef.current.getGenerativeModel({ model: "gemini-2.0-flash" })
-      const history = messages
-        .map((msg) => `${msg.role === "user" ? "User" : "Anas"}: ${msg.content}`)
-        .join("\n")
-      const promptMessage = systemPrompt(input)
-      const result = await model.generateContent(promptMessage)
-      const response = await result.response
-      const replyText = response.text()
-      
-      // Store the response but don't display it immediately
-      setAiResponse(replyText || "Hmm... no response received")
-      
-      // Set a timer to show the response as "ready" after the delay
-      setTimeout(() => {
-        setIsResponseReady(true)
-      }, RESPONSE_TYPING_DELAY)
-      
-    } catch (error) {
-      console.error("Error generating content:", error)
-      // Try with a different API key
-      const newKey = rotateApiKey()
-      genAIRef.current = new GoogleGenerativeAI(newKey)
-      
-      // Still delay the error message
-      setTimeout(() => {
-        setAiResponse("Sorry, I'm having trouble right now. Please try again later.")
-        setIsResponseReady(true)
-      }, RESPONSE_TYPING_DELAY)
     }
+    
+    await attemptSend()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -316,6 +445,20 @@ export default function AIChat() {
                       <>
                         <span className="inline-block w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
                         Typing...
+                      </>
+                    ) : apiError ? (
+                      <>
+                        <span className="inline-block w-2 h-2 bg-red-500 rounded-full"></span>
+                        {apiError}
+                        {failedKeys.size >= apiKeys.length && (
+                          <button
+                            onClick={resetFailedKeys}
+                            className="ml-2 text-xs underline hover:no-underline"
+                            title="Reset and retry all API keys"
+                          >
+                            Reset
+                          </button>
+                        )}
                       </>
                     ) : (
                       "Software Developer"
