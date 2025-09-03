@@ -1,433 +1,287 @@
-'use client';
 
-import { useEffect, useState } from 'react';
-import AIChat from "@/components/ai-chat";
 
-export default function Home() {
-  const [flickerText, setFlickerText] = useState('ANAS BOUZANBIL');
-  const [glitchActive, setGlitchActive] = useState(false);
+"use client"
+
+import type React from "react"
+import { useState, useEffect, useRef } from "react"
+import { gsap } from "gsap"
+import { Send, Github, ExternalLink, Calendar, Code, Smartphone, Monitor, Layers, Mail, Linkedin, MapPin, Download } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent } from "@/components/ui/card"
+import { useToast } from "@/hooks/use-toast"
+import { useTheme } from "next-themes"
+import Script from "next/script"
+import ScrollToTop from "@/components/scroll-to-top"
+import type { ProjectDetails } from "@/components/project-modal"
+import AIChat from "@/components/ai-chat"
+import Text3DScene from "@/components/3d-text"
+import FloatingBackground from "@/components/floating-background"
+
+export default function Portfolio() {
+  const { toast } = useToast()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null)
+  const [isEmailJSReady, setIsEmailJSReady] = useState(false)
+
+  // Refs for GSAP animations
+  const heroRef = useRef<HTMLDivElement>(null)
+  const navRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const originalName = 'ANAS BOUZANBIL';
-    const glitchChars = '!@#$%^&*()_+-=[]{}|;:,.<>?~`';
-    
-    const interval = setInterval(() => {
-      if (Math.random() > 0.7) {
-        setGlitchActive(true);
-        let glitched = originalName.split('').map(char => {
-          if (char === ' ') return ' ';
-          return Math.random() > 0.8 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : char;
-        }).join('');
-        setFlickerText(glitched);
-        
-        setTimeout(() => {
-          setFlickerText(originalName);
-          setGlitchActive(false);
-        }, 100);
-      }
-    }, 2000);
+    setMounted(true)
+  }, [])
 
-    return () => clearInterval(interval);
-  }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.emailjs && !isEmailJSReady) {
+      window.emailjs.init({
+        publicKey: "kc3e4_a8EsRdyRu6D",
+      })
+      setIsEmailJSReady(true)
+    }
+  }, [isEmailJSReady])
+
+  // GSAP Animations
+  useEffect(() => {
+    if (!mounted) return
+
+    // Hero section animations
+    const heroTl = gsap.timeline()
+    
+    // Animate the subtitle with typewriter effect
+    const subtitle = heroRef.current?.querySelector('.hero-subtitle')
+    if (subtitle) {
+      const text = subtitle.textContent || ""
+      subtitle.textContent = ""
+      
+      heroTl.to(subtitle, { duration: 0.1, opacity: 1 })
+        .to({}, { duration: 0.1, onUpdate: () => {
+          if (subtitle.textContent?.length || 0 < text.length) {
+            subtitle.textContent = text.slice(0, (subtitle.textContent?.length || 0) + 1)
+          }
+        }, repeat: text.length - 1 })
+    }
+
+    // Animate the 3D text container
+    const text3dContainer = heroRef.current?.querySelector('.text-3d-container')
+    if (text3dContainer) {
+      gsap.fromTo(text3dContainer, 
+        { opacity: 0, scale: 0.5, y: 50 }, 
+        { opacity: 1, scale: 1, y: 0, duration: 1.5, ease: "back.out(1.7)" }
+      )
+    }
+
+    // Navigation animations
+    if (navRef.current) {
+      gsap.fromTo(navRef.current, 
+        { y: -100, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
+      )
+    }
+
+    // Floating elements animation
+    const floatingElements = heroRef.current?.querySelectorAll('.floating-element')
+    if (floatingElements) {
+      gsap.fromTo(floatingElements, 
+        { opacity: 0, y: 30, scale: 0.8 }, 
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1, 
+          duration: 1, 
+          ease: "power3.out",
+          stagger: 0.2
+        }
+      )
+    }
+
+    return () => {
+      // Cleanup if needed
+    }
+  }, [mounted])
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (typeof window !== "undefined" && window.emailjs && formRef.current) {
+      window.emailjs.sendForm("service_2pqx0u1", "template_my2xqif", formRef.current, "kc3e4_a8EsRdyRu6D").then(
+        () => {
+          toast({
+            title: "Message sent!",
+            description: "Thanks for reaching out. I'll get back to you soon.",
+          })
+          if (formRef.current) {
+            formRef.current.reset()
+          }
+        },
+        (error) => {
+          toast({
+            title: "Failed to send message",
+            description: "Please try again later.",
+            variant: "destructive",
+          })
+          console.error("EmailJS Error:", error)
+        },
+      )
+    } else {
+      toast({
+        title: "EmailJS not loaded",
+        description: "Please try again later.",
+        variant: "destructive",
+      })
+    }
+  }
+
+  // Enhanced project data
+  const projects: ProjectDetails[] = [
+    {
+      title: "ChessCheat",
+      description: "Chess AI assistant providing real-time game analysis and best move suggestions for chess players.",
+      link: "http://chesscheat.zapto.org/",
+      type: "web",
+      technologies: ["JavaScript", "React", "Chess.js", "Stockfish"],
+      image: "https://images.pexels.com/photos/260024/pexels-photo-260024.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2024",
+    },
+    {
+      title: "Matching",
+      description: "Dating platform matching users based on shared interests and hobbies with intelligent algorithms.",
+      type: "web",
+      technologies: ["React", "Node.js", "Express", "PostgreSQL"],
+      github: "https://github.com/AnasBouzanbil/Matcha",
+      image: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2024",
+    },
+    {
+      title: "Paddle Pro",
+      description: "Modern Atari Pong-inspired platform connecting paddle players with integrated chat and match features.",
+      type: "web",
+      technologies: ["TypeScript", "React", "Node.js", "Socket.io"],
+      github: "https://github.com/AnasBouzanbil/JS_TS_Projects/tree/main/PaddlePro",
+      image: "https://images.pexels.com/photos/163064/play-stone-network-networked-interactive-163064.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2024",
+    },
+    {
+      title: "HeyTv!",
+      description: "Global video chat platform connecting users worldwide, similar to Omegle with enhanced features.",
+      link: "https://heytv.sytes.net/",
+      type: "web",
+      technologies: ["JavaScript", "WebRTC", "Socket.io", "Node.js"],
+      image: "https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2024",
+    },
+    {
+      title: "HttpServer",
+      description: "Custom HTTP server built from scratch in C++ and C, mimicking Nginx functionality with custom routing.",
+      type: "C++",
+      technologies: ["C++", "C", "Networking", "HTTP Protocol"],
+      github: "https://github.com/AnasBouzanbil/Cpp-/tree/main/HTTP_SERVER",
+      image: "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2024",
+    },
+    {
+      title: "MoneyFlow",
+      description: "Mobile finance management app for tracking spending, budgeting, and financial planning.",
+      type: "mobile",
+      technologies: ["React Native", "TypeScript", "Redux"],
+      image: "https://images.pexels.com/photos/1181263/pexels-photo-1181263.jpeg?auto=compress&cs=tinysrgb&w=600",
+      date: "2025",
+    }
+  ]
+
+  const skills = [
+    { name: "Frontend", icon: Monitor, technologies: ["React", "TypeScript", "Next.js", "Tailwind CSS"] },
+    { name: "Backend", icon: Code, technologies: ["Node.js", "Express", "PostgreSQL", "MongoDB"] },
+    { name: "Mobile", icon: Smartphone, technologies: ["React Native", "Expo", "Native Modules"] },
+    { name: "Languages", icon: Layers, technologies: ["JavaScript", "TypeScript", "C++", "Python"] },
+  ]
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'mobile':
+        return <Smartphone className="w-4 h-4" />
+      case 'web':
+        return <Monitor className="w-4 h-4" />
+      default:
+        return <Code className="w-4 h-4" />
+    }
+  }
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'mobile':
+        return 'from-blue-500 to-cyan-500'
+      case 'web':
+        return 'from-green-500 to-emerald-500'
+      default:
+        return 'from-purple-500 to-indigo-500'
+    }
+  }
 
   return (
-    <>
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=VT323:wght@400&family=Share+Tech+Mono:wght@400&display=swap');
-        
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+    <div className="bg-background text-foreground min-h-screen relative overflow-hidden">
+      <Script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" strategy="lazyOnload" />
 
-        body {
-          font-family: 'VT323', 'Share Tech Mono', 'Courier New', monospace;
-          background: 
-            radial-gradient(circle at 20% 80%, #120458 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, #1a0845 0%, transparent 50%),
-            radial-gradient(circle at 40% 40%, #0a0320 0%, transparent 50%),
-            linear-gradient(135deg, #2d1b69 0%, #11052c 100%);
-          background-attachment: fixed;
-          color: #00ff00;
-          min-height: 100vh;
-          overflow-x: hidden;
-          line-height: 1.6;
-        }
+      {/* Creative Background */}
+      <FloatingBackground />
 
-        .scanlines {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: linear-gradient(
-            transparent 50%,
-            rgba(0, 255, 0, 0.03) 50%
-          );
-          background-size: 100% 4px;
-          pointer-events: none;
-          z-index: 1;
-          animation: scanlines 0.1s linear infinite;
-        }
-
-        @keyframes scanlines {
-          0% { background-position: 0 0; }
-          100% { background-position: 0 4px; }
-        }
-
-        .container {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          min-height: 100vh;
-          padding: 2rem;
-          position: relative;
-          z-index: 2;
-          margin: 0 auto;
-          width: 100%;
-          box-sizing: border-box;
-        }
-
-        .retro-box {
-          background: rgba(0, 0, 0, 0.85);
-          border: 3px solid #00ff00;
-          border-radius: 0;
-          padding: 3rem 2.5rem;
-          text-align: center;
-          box-shadow: 
-            0 0 30px rgba(0, 255, 0, 0.5),
-            inset 0 0 30px rgba(0, 255, 0, 0.1),
-            0 0 0 1px rgba(0, 255, 0, 0.2);
-          max-width: 700px;
-          width: 100%;
-          position: relative;
-          margin: 0 auto;
-          backdrop-filter: blur(2px);
-        }
-
-        .retro-box::before {
-          content: '';
-          position: absolute;
-          top: -3px;
-          left: -3px;
-          right: -3px;
-          bottom: -3px;
-          background: linear-gradient(45deg, 
-            #00ff00 0%, 
-            #ff0080 25%, 
-            #0080ff 50%, 
-            #ffff00 75%, 
-            #00ff00 100%);
-          z-index: -1;
-          border-radius: 0;
-          animation: borderGlow 3s linear infinite;
-        }
-
-        @keyframes borderGlow {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.7; }
-        }
-
-        .name {
-          font-size: clamp(2.5rem, 6vw, 4rem);
-          font-weight: normal;
-          color: #00ff00;
-          text-shadow: 
-            0 0 10px #00ff00, 
-            0 0 20px #00ff00,
-            0 0 30px #00ff00;
-          margin-bottom: 2rem;
-          letter-spacing: 3px;
-          position: relative;
-          font-family: 'VT323', monospace;
-          line-height: 1.2;
-        }
-
-        .name.glitch {
-          animation: glitch 0.1s;
-          color: #ff0080;
-          text-shadow: 
-            -2px 0 #00ff00,
-            2px 0 #0080ff,
-            0 0 10px #ff0080;
-        }
-
-        @keyframes glitch {
-          0%, 100% { transform: translate(0); }
-          20% { transform: translate(-2px, 2px); }
-          40% { transform: translate(-2px, -2px); }
-          60% { transform: translate(2px, 2px); }
-          80% { transform: translate(2px, -2px); }
-        }
-
-        .typewriter {
-          font-size: clamp(1.2rem, 3.5vw, 1.6rem);
-          color: #ffff00;
-          margin-bottom: 2.5rem;
-          border-right: 3px solid #ffff00;
-          white-space: nowrap;
-          overflow: hidden;
-          animation: typewriter 4s steps(60) 1s forwards, blink 1s infinite;
-          width: 0;
-          margin-left: auto;
-          margin-right: auto;
-          font-family: 'VT323', monospace;
-          text-shadow: 0 0 5px #ffff00;
-          line-height: 1.4;
-        }
-
-        @keyframes typewriter {
-          to { width: 100%; }
-        }
-
-        @keyframes blink {
-          50% { border-color: transparent; }
-        }
-
-        .contact {
-          font-size: clamp(1rem, 3vw, 1.3rem);
-          color: #00ffff;
-          margin-top: 2rem;
-          padding: 1.5rem;
-          border: 1px solid rgba(0, 255, 255, 0.3);
-          background: rgba(0, 255, 255, 0.05);
-          border-radius: 0;
-          font-family: 'VT323', monospace;
-          text-shadow: 0 0 5px #00ffff;
-          line-height: 1.5;
-        }
-
-        .linkedin-link {
-          color: #ff0080;
-          text-decoration: none;
-          font-weight: normal;
-          text-shadow: 0 0 8px #ff0080;
-          transition: all 0.3s ease;
-          position: relative;
-          padding: 0.2rem 0.5rem;
-          border: 1px solid transparent;
-        }
-
-        .linkedin-link:hover {
-          color: #00ff00;
-          text-shadow: 0 0 15px #00ff00;
-          animation: pulse 0.5s ease;
-          border: 1px solid #00ff00;
-          background: rgba(0, 255, 0, 0.1);
-        }
-
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-
-        .marquee {
-          position: absolute;
-          top: 1rem;
-          left: 0;
-          width: 100%;
-          color: #ff0080;
-          font-size: 0.9rem;
-          white-space: nowrap;
-          animation: scroll 20s linear infinite;
-          font-family: 'VT323', monospace;
-          text-shadow: 0 0 5px #ff0080;
-          z-index: 3;
-        }
-
-        @keyframes scroll {
-          0% { transform: translateX(100%); }
-          100% { transform: translateX(-100%); }
-        }
-
-        .blink {
-          animation: blinkText 1.5s infinite;
-          font-size: 1.2em;
-          color: #00ff00;
-          margin-right: 0.5rem;
-        }
-
-        @keyframes blinkText {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-
-        .retro-cursor {
-          display: inline-block;
-          background-color: #00ff00;
-          animation: blink 1s infinite;
-          width: 0.8rem;
-          height: 1em;
-          margin-left: 0.2rem;
-        }
-
-        .stars {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .star {
-          position: absolute;
-          color: #ffffff;
-          font-size: clamp(8px, 2vw, 12px);
-          animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.2; }
-          50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .crt-effect {
-          position: relative;
-        }
-
-        .crt-effect::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: linear-gradient(
-            rgba(18, 16, 16, 0) 50%, 
-            rgba(0, 0, 0, 0.25) 50%
-          ), 
-          linear-gradient(
-            90deg,
-            rgba(255, 0, 0, 0.06),
-            rgba(0, 255, 0, 0.02),
-            rgba(0, 0, 255, 0.06)
-          );
-          background-size: 100% 2px, 3px 100%;
-          pointer-events: none;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-          .container {
-            padding: 1rem;
-            min-height: 100vh;
-          }
-          
-          .retro-box {
-            padding: 2rem 1.5rem;
-            margin: 1rem 0;
-          }
-          
-          .typewriter {
-            white-space: normal;
-            border-right: none;
-            animation: none;
-            width: auto;
-            text-align: center;
-          }
-          
-          .marquee {
-            font-size: 0.7rem;
-            top: 0.5rem;
-          }
-
-          .contact {
-            padding: 1rem;
-            margin-top: 1.5rem;
-          }
-
-          .name {
-            letter-spacing: 2px;
-            margin-bottom: 1.5rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .container {
-            padding: 0.5rem;
-          }
-          
-          .retro-box {
-            padding: 1.5rem 1rem;
-            margin: 0.5rem 0;
-          }
-
-          .marquee {
-            font-size: 0.6rem;
-          }
-
-          .contact {
-            padding: 0.8rem;
-            margin-top: 1rem;
-          }
-        }
-
-        /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-          .retro-box {
-            border-width: 2px;
-          }
-          
-          .retro-box::before {
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-          }
-        }
-      `}</style>
-
-      <div className="scanlines"></div>
-      
-      <div className="stars">
-        {Array.from({ length: 80 }, (_, i) => (
-          <div
-            key={i}
-            className="star"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 3}s`,
-              animationDuration: `${2 + Math.random() * 2}s`,
-            }}
-          >
-            ★
-          </div>
-        ))}
-      </div>
-
-      <div className="marquee">
-        *** Welcome to Anas Bouzanbil's HOME ***
-      </div>
-
-      <div className="container">
-        <div className="retro-box crt-effect">
-          <h1 className={`name ${glitchActive ? 'glitch' : ''}`}>
-            {flickerText}<span className="retro-cursor">█</span>
-          </h1>
-          
-          <div className="typewriter">
-            Student • Mobile Developer • Web Developer
-          </div>
-
-          <div className="contact">
-            <span className="blink">►</span>If you need anything, hit me up on{' '}
-            <a 
-              href="https://www.linkedin.com/in/anas-bouzanbil/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="linkedin-link"
+      {/* Navigation */}
+      <nav ref={navRef} className="fixed top-0 left-0 right-0 z-50 bg-background/20 backdrop-blur-md border-b border-border/20">
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="text-xl font-bold text-primary">Anas Bouzanbil</div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="ml-4 bg-background/50 border-border/50 hover:bg-background/80"
             >
-              LinkedIn
-            </a>.
+              {theme === "dark" ? "☀️" : "🌙"}
+            </Button>
           </div>
         </div>
+      </nav>
+
+      {/* Hero Section - Full Screen */}
+      <section ref={heroRef} id="home" className="h-screen flex flex-col items-center justify-center relative z-10">
+        {/* Background gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5" />
+        
+        {/* Main content */}
+        <div className="container mx-auto px-6 text-center relative z-20">
+          {/* 3D Text Container */}
+          <div className="text-3d-container mb-8 h-32 md:h-40 lg:h-48">
+            <Text3DScene />
+          </div>
+          
+          {/* Fallback Text Display - Always visible */}
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-8 text-gradient">
+            ANAS
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="hero-subtitle text-xl md:text-2xl lg:text-3xl text-muted-foreground mb-12 max-w-3xl mx-auto leading-relaxed opacity-0">
+            Software Developer passionate about mobile and web development, with a keen interest in AI. I create innovative solutions for fun and profit.
+          </p>
+          
+          {/* Floating decorative elements */}
+          <div className="floating-element absolute top-20 left-20 w-4 h-4 bg-primary/30 rounded-full animate-pulse" />
+          <div className="floating-element absolute top-32 right-32 w-3 h-3 bg-purple-500/40 rounded-full animate-ping" />
+          <div className="floating-element absolute bottom-40 left-1/4 w-5 h-5 bg-blue-500/30 rounded-full animate-bounce" />
+          <div className="floating-element absolute bottom-32 right-1/4 w-2 h-2 bg-green-500/50 rounded-full animate-pulse" />
+          
+          {/* Creative geometric shapes */}
+          <div className="floating-element absolute top-1/3 left-1/3 w-16 h-16 border-2 border-primary/20 rounded-lg transform rotate-45 animate-spin" style={{ animationDuration: '20s' }} />
+          <div className="floating-element absolute bottom-1/3 right-1/3 w-20 h-20 border-2 border-purple-500/20 rounded-full animate-spin" style={{ animationDuration: '30s' }} />
+        </div>
+      </section>
+
+      {/* AI Chat - Positioned at bottom right */}
+      <div className="fixed bottom-6 right-6 z-50">
         <AIChat />
       </div>
-    </>
-  );
+    </div>
+  )
 }
